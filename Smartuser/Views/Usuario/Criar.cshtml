@@ -1,0 +1,37 @@
+﻿@model Smartuser.Models.Usuario
+
+@{
+    ViewData["Title"] = "Criar Usuário";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Criar" method="post" class="w-50">
+    <div class="mb-3">
+        <label asp-for="Nome" class="form-label"></label>
+        <input asp-for="Nome" class="form-control" required />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sobrenome" class="form-label"></label>
+        <input asp-for="Sobrenome" class="form-control" required />
+        <span asp-validation-for="Sobrenome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Criar</button>
+    </div>
+</form>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Voltar para a lista</a>
+</div>

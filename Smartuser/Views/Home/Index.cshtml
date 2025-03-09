@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Página Inicial";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-info" role="alert">
+    BEM-VINDO AO SISTEMA SMARTUSER! AQUI VOCÊ PODE GERENCIAR USUÁRIOS E OUTROS RECURSOS.
+</div>
+
+<p>
+    <a href="@Url.Action("Index", "Usuario")" class="btn btn-primary">Acessar Usuários</a>
+</p>

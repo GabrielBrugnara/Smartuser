@@ -1,0 +1,33 @@
+﻿@model Smartuser.Models.Usuario
+
+@{
+    ViewData["Title"] = "Excluir Usuário";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Tem certeza que deseja excluir o usuário?</h4>
+<hr />
+
+<div class="form-group">
+    <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd>@Model.ID</dd>
+        <dt>Nome</dt>
+        <dd>@Model.Nome @Model.Sobrenome</dd>
+        <dt>Email</dt>
+        <dd>@Model.Email</dd>
+        <dt>Data de Criação</dt>
+        <dd>@Model.DataCriacao.ToString("dd/MM/yyyy")</dd>
+        <dt>Última Alteração</dt>
+        <dd>@(Model.UltimaAlteracao.HasValue ? Model.UltimaAlteracao.Value.ToString("dd/MM/yyyy") : "N/A")</dd>
+    </dl>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="ID" />
+    <div class="form-group">
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href="@Url.Action("Index", "Usuario")" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
