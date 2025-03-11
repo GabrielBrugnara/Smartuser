@@ -22,8 +22,9 @@
             background-color: #343a40;
             padding-top: 20px;
             transition: 0.3s;
+            overflow-y: auto;
         }
-
+            /* Estilo para os links do menu lateral */
             .sidebar a {
                 color: white;
                 padding: 10px 15px;
@@ -32,44 +33,81 @@
                 font-size: 18px;
                 transition: 0.3s;
             }
-
+                /* Efeito hover nos links do menu */
                 .sidebar a:hover {
                     background-color: #575757;
                 }
-
+            /* Estilo para o logotipo da sidebar */
             .sidebar img {
                 margin-bottom: 20px;
                 margin-left: 20px;
             }
-
         /* CONTEÚDO PRINCIPAL */
         .content {
             margin-left: 250px;
             padding: 20px;
         }
-
+        /* CABEÇALHO FIXO */
         .header {
             background-color: #343a40;
             color: white;
             padding: 15px;
             text-align: center;
         }
-
     </style>
 </head>
 <body>
 
     <!-- MENU LATERAL -->
     <div class="sidebar" id="sidebar">
-        <img src="@Url.Content("~/images/logo.png")" alt="Logo ERP" style="width: 180px; height: 60px; object-fit: cover; border-radius: 8px;">
-        <a href="@Url.Action("Index", "Home")"><i class="bi bi-bar-chart text-white"></i> Dashboard</a>
-        <a href="@Url.Action("Index", "Usuario")"><i class="bi bi-person text-white"></i> Usuários</a>
-        <a href="@Url.Action("ListaDeEstoque", "Item")"><i class="bi bi-boxes text-white"></i> Estoque</a> <!-- BOTÃO ESTOQUE ADICIONADO -->
+        <!-- Logotipo -->
+        <img src='@Url.Content("~/images/logo.png")' alt="Logo ERP"
+             style="width: 180px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;">
+
+        <!-- Botão Dashboard -->
+        <a href='@Url.Action("Index", "Home")'>
+            <i class="bi bi-bar-chart"></i> <span>Dashboard</span>
+        </a>
+
+        <!-- Botão Usuários -->
+        <a href='@Url.Action("Index", "Usuario")'>
+            <i class="bi bi-person"></i> <span>Usuários</span>
+        </a>
+
+        <!-- Botão Clientes -->
+        <a href='@Url.Action("ListaClientes", "Cliente")'>
+            <i class="bi bi-person-lines-fill"></i> <span>Clientes</span>
+        </a>
+
+        <!-- Botão Estoque com seta embutida -->
+        <div class="estoque-item" style="width: 100%;">
+            <!-- Link unificado que ocupa 100% da linha -->
+            <a href='@Url.Action("ListaDeEstoque", "Item")'
+               class="d-flex align-items-center justify-content-between estoque-link"
+               style="width: 100%; padding: 10px 15px; font-size: 18px; color: white; text-decoration: none;">
+                <span>
+                    <i class="bi bi-boxes"></i> <span>Estoque</span>
+                </span>
+                <!-- Seta embutida: área pequena para clique, sem interferir no redirecionamento -->
+                <span class="estoque-arrow" style="cursor: pointer; padding-left: 5px;">
+                    <i class="bi bi-chevron-down"></i>
+                </span>
+            </a>
+            <!-- Submenu Estoque: aparece logo abaixo do botão, sem deslocar o conteúdo principal -->
+            <div class="collapse" id="estoqueSubmenu">
+                <a href='@Url.Action("ListaGrupos", "Grupo")'
+                   style="display: block; padding: 10px 30px; font-size: 18px; color: white; text-decoration: none;">
+                    <i class="bi bi-collection"></i> <span>Grupos</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- CABEÇALHO FIXO -->
     <div class="header">
-        <h2 id="page-title"><i class="bi bi-pc-display"></i> Erp Estudo</h2>
+        <h2 id="page-title">
+            <i class="bi bi-pc-display"></i> Erp Estudo
+        </h2>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
@@ -80,8 +118,25 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Ao carregar a página, intercepta o clique na seta do botão Estoque para alternar o submenu
+        document.addEventListener("DOMContentLoaded", function() {
+          var arrow = document.querySelector(".estoque-arrow");
+          arrow.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var submenu = document.getElementById("estoqueSubmenu");
+            var collapseInstance = bootstrap.Collapse.getInstance(submenu);
+            if (collapseInstance) {
+              collapseInstance.toggle();
+            } else {
+              new bootstrap.Collapse(submenu, { toggle: true });
+            }
+          });
+        });
+    </script>
 
-    <!-- SEÇÃO DE SCRIPTS (ADICIONADA PARA RENDERIZAR QUALQUER SCRIPT ADICIONAL NAS VIEWS) -->
+    <!-- SEÇÃO DE SCRIPTS (para scripts adicionais nas views) -->
     @RenderSection("Scripts", false)
 
 </body>

@@ -1,0 +1,34 @@
+﻿@model Smartuser.Models.Cliente
+
+@{
+    ViewData["Title"] = "Excluir Cliente";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h4>Tem certeza que deseja excluir este cliente?</h4>
+    <hr />
+    <dl class="row w-50 text-start">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ID)</dd>
+        <dt class="col-sm-3">Nome</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+        <dt class="col-sm-3">Sobrenome</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Sobrenome)</dd>
+        <dt class="col-sm-3">CPF/CNPJ</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.CPFCNPJ)</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+        <dt class="col-sm-3">Telefone</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefone)</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post" class="w-50 text-start">
+        <input type="hidden" asp-for="ID" />
+        <div class="mb-3">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+            <a asp-action="ListaClientes" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

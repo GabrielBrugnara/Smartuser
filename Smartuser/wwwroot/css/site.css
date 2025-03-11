@@ -118,3 +118,20 @@ body {
         margin-bottom: 10px;
     }
 }
+
+/* ESTILOS PARA TABELA COM BORDAS MAIS FINAS */
+.minha-tabela {
+    border-collapse: separate !important; /* Necessário para o border-radius funcionar */
+    border-spacing: 0 !important;
+    border-radius: 10px !important; /* Cantos arredondados */
+    overflow: hidden !important; /* Impede que o conteúdo ultrapasse os cantos */
+    width: 100%;
+    border: 0.5px solid #ddd !important; /* Borda externa mais fina e com cor suave */
+}
+
+    .minha-tabela th,
+    .minha-tabela td {
+        padding: 8px;
+        border: 0.5px solid #ddd !important; /* Bordas internas também mais finas */
+        text-align: left;
+    }
