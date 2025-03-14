@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Smartuser.Models.Produto>
+
+@{
+    ViewData["Title"] = "Lista de Produtos";
+}
+
+<h2>Lista de Produtos</h2>
+
+<!-- BOTÃO CRIAR PRODUTO -->
+<div class="text-start mb-3">
+    <a href='@Url.Action("Criar", "Produto")' class="btn btn-primary btn-sm">Cadastrar Novo Produto</a>
+</div>
+
+<!-- Tabela de Produtos -->
+<table class="table table-striped table-bordered table-hover minha-tabela">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Grupo</th>
+            <th>Quantidade em Estoque</th>
+            <th>Preço</th>
+            <th>Data de Criação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var produto in Model)
+        {
+            <tr>
+                <td>@produto.ID</td>
+                <td>@produto.Descricao</td>
+                <td>@produto.Grupo?.Nome</td>
+                <td>@produto.QuantidadeEstoque</td>
+                <td>@produto.Preco.ToString("C")</td>
+                <td>@produto.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a href="@Url.Action("Editar", "Produto", new { id = produto.ID })" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="@Url.Action("Delete", "Produto", new { id = produto.ID })" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

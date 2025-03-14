@@ -62,7 +62,7 @@ namespace Smartuser.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(int id, Grupo grupo)
         {
-            if (id != grupo.ID)
+            if (id != grupo.GrupoID)
                 return NotFound();
 
             if (ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace Smartuser.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Grupos.Any(e => e.ID == grupo.ID))
+                    if (!_context.Grupos.Any(e => e.GrupoID == grupo.GrupoID))
                         return NotFound();
                     else
                         throw;
@@ -90,7 +90,7 @@ namespace Smartuser.Controllers
             if (id == null)
                 return NotFound();
 
-            var grupo = await _context.Grupos.FirstOrDefaultAsync(m => m.ID == id);
+            var grupo = await _context.Grupos.FirstOrDefaultAsync(m => m.GrupoID == id);
             if (grupo == null)
                 return NotFound();
 

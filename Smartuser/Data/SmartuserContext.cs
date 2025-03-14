@@ -8,18 +8,43 @@ namespace Smartuser.Data
         public SmartuserContext(DbContextOptions<SmartuserContext> options) : base(options) { }
 
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Item> Itens { get; set; }
+        public DbSet<Produto> Produtos { get; set; }
         public DbSet<Grupo> Grupos { get; set; }
-        public DbSet<Cliente> Clientes { get; set; } // Novo cadastro de clientes
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Fatura> Faturas { get; set; }
+        public DbSet<FaturaProduto> FaturaProdutos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Item>()
-                .HasOne(i => i.Grupo)
-                .WithMany(g => g.Itens)
-                .HasForeignKey("GrupoID")
-                .HasPrincipalKey(g => g.ID)
+            // Relacionamento entre Produto e Grupo
+            modelBuilder.Entity<Produto>()
+                .HasOne(p => p.Grupo) // Relacionamento com o Grupo
+                .WithMany(g => g.Produto) // Um Grupo tem muitos Produtos
+                .HasForeignKey(p => p.GrupoID) // Usamos a chave estrangeira "GrupoID"
+                .OnDelete(DeleteBehavior.Cascade); // Exclusão em cascata
+
+            // Relacionamento entre Fatura e Cliente
+            modelBuilder.Entity<Fatura>()
+                .ToTable("Faturas")
+                .HasOne(f => f.Cliente)
+                .WithMany()
+                .HasForeignKey("ClienteID")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento entre FaturaProduto e Fatura
+            modelBuilder.Entity<FaturaProduto>()
+                .ToTable("FaturaProdutos")
+                .HasOne(fp => fp.Fatura)
+                .WithMany(f => f.FaturaProdutos)
+                .HasForeignKey(fp => fp.FaturaID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Relacionamento entre FaturaProduto e Produto
+            modelBuilder.Entity<FaturaProduto>()
+                .HasOne(fp => fp.Produto)
+                .WithMany()
+                .HasForeignKey(fp => fp.ProdutoID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

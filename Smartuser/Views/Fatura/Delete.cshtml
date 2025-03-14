@@ -1,0 +1,31 @@
+﻿@model Smartuser.Models.Fatura
+
+@{
+    ViewData["Title"] = "Excluir Fatura";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Tem certeza de que deseja excluir esta fatura?</h4>
+<hr />
+
+<div class="form-group">
+    <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd>@Model.ID</dd>
+        <dt>Cliente</dt>
+        <dd>@(Model.Cliente != null ? Model.Cliente.Nome : "Sem Cliente")</dd>
+        <dt>Data da Venda</dt>
+        <dd>@Model.DataVenda.ToString("dd/MM/yyyy")</dd>
+        <dt>Total</dt>
+        <dd>@Model.TotalGeral.ToString("C")</dd>
+        <dt>Data de Criação</dt>
+        <dd>@Model.DataCriacao.ToString("dd/MM/yyyy")</dd>
+    </dl>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="ID" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a href="@Url.Action("ListaDeFatura", "Fatura")" class="btn btn-secondary">Cancelar</a>
+</form>

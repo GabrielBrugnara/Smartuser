@@ -1,0 +1,50 @@
+﻿@model Smartuser.Models.Produto
+
+@{
+    ViewData["Title"] = "Cadastrar Novo Produto";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Criar" method="post" class="w-50">
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label">Descrição</label>
+        <input asp-for="Descricao" class="form-control" required />
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="GrupoID" class="form-label">Grupo</label>
+        <div class="input-group">
+            <select class="form-control" id="GrupoID" name="GrupoID" required>
+                <option value="">Selecione um Grupo</option>
+                @foreach (var grupo in ViewBag.Grupos)
+                {
+                    <option value="@grupo.ID">@grupo.Nome</option>
+                }
+            </select>
+            <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#CreateGrupoModal">
+                Criar Novo Grupo
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="QuantidadeEstoque" class="form-label">Quantidade em Estoque</label>
+        <input asp-for="QuantidadeEstoque" type="number" class="form-control" required />
+        <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Preco" class="form-label">Preço</label>
+        <input asp-for="Preco" type="number" step="0.01" class="form-control" required />
+        <span asp-validation-for="Preco" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <a href='@Url.Action("ListaDeProdutos", "Produto")' class="btn btn-secondary">Voltar</a>
+    </div>
+</form>

@@ -1,0 +1,74 @@
+﻿@model Smartuser.Models.Produto
+
+@{
+    ViewData["Title"] = "Editar Produto";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Editar" method="post" id="formEditar" class="w-50">
+    <input type="hidden" asp-for="ID" />
+
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label">Descrição</label>
+        <input asp-for="Descricao" class="form-control" required />
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Grupo</label>
+        <select class="form-control" id="GrupoID" name="GrupoID" required>
+            <option value="">Selecione um Grupo</option>
+            @foreach (var grupo in ViewBag.Grupos)
+            {
+                <option value="@grupo.ID" selected="@(Model.Grupo != null && Model.Grupo.GrupoID == grupo.ID ? "selected" : null)">@grupo.Nome</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="QuantidadeEstoque" class="form-label">Quantidade em Estoque</label>
+        <input asp-for="QuantidadeEstoque" type="number" class="form-control" required />
+        <span asp-validation-for="QuantidadeEstoque" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Preco" class="form-label">Preço</label>
+        <input asp-for="Preco" type="number" step="0.01" class="form-control" required />
+        <span asp-validation-for="Preco" class="text-danger"></span>
+    </div>
+
+    <!-- Botão de Salvar com Confirmação -->
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarEdicao">
+            Salvar Alterações
+        </button>
+    </div>
+</form>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="modalConfirmarEdicao" tabindex="-1" aria-labelledby="modalConfirmarEdicaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarEdicaoLabel">Confirmar Edição</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza de que deseja salvar as alterações neste produto?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarEdicao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmarEdicao() {
+            document.getElementById("formEditar").submit();
+        }
+    </script>
+}

@@ -31,13 +31,13 @@
             @foreach (var grupo in Model)
             {
                 <tr>
-                    <td>@grupo.ID</td>
+                    <td>@grupo.GrupoID</td>
                     <td>@grupo.Nome</td>
                     <td>
                         <!-- Botão Editar -->
-                        <a href="@Url.Action("Editar", "Grupo", new { id = grupo.ID })" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="@Url.Action("Editar", "Grupo", new { id = grupo.GrupoID })" class="btn btn-warning btn-sm">Editar</a>
                         <!-- Botão Deletar -->
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setGrupoIdDeletar(@grupo.ID)">Excluir</button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setGrupoIdDeletar(@grupo.GrupoID)">Excluir</button>
                     </td>
                 </tr>
             }

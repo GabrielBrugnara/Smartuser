@@ -14,7 +14,7 @@
             ID
         </dt>
         <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.ID)
+            @Html.DisplayFor(model => model.GrupoID)
         </dd>
         <dt class="col-sm-3">
             Nome
@@ -25,7 +25,7 @@
     </dl>
 
     <form asp-action="Delete" method="post" class="w-50 mx-auto">
-        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="GrupoID" />
         <div class="mb-3 text-center">
             <button type="submit" class="btn btn-danger">Excluir</button>
             <a asp-action="ListaGrupos" class="btn btn-secondary">Cancelar</a>

@@ -79,10 +79,15 @@
             <i class="bi bi-person-lines-fill"></i> <span>Clientes</span>
         </a>
 
+        <!-- Botão Faturamento: direciona para a tela de Lista de Fatura -->
+        <a href='@Url.Action("ListaDeFaturas", "Fatura")'>
+            <i class="bi bi-receipt"></i> <span>Faturamento</span>
+        </a>
+
         <!-- Botão Estoque com seta embutida -->
         <div class="estoque-item" style="width: 100%;">
             <!-- Link unificado que ocupa 100% da linha -->
-            <a href='@Url.Action("ListaDeEstoque", "Item")'
+            <a href='@Url.Action("ListaDeProdutos", "Produto")'
                class="d-flex align-items-center justify-content-between estoque-link"
                style="width: 100%; padding: 10px 15px; font-size: 18px; color: white; text-decoration: none;">
                 <span>
@@ -106,7 +111,7 @@
     <!-- CABEÇALHO FIXO -->
     <div class="header">
         <h2 id="page-title">
-            <i class="bi bi-pc-display"></i> Erp Estudo
+            <i class="bi bi-pc-display"></i> Erp Inteligente Para Seu Negocio!
         </h2>
     </div>
 

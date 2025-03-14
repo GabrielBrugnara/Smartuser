@@ -1,13 +1,59 @@
 ﻿@{
-    ViewData["Title"] = "Página Inicial";
+    ViewData["Title"] = "Home";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h2 class="mb-3 text-white">Bem-vindo ao Smartuser</h2>
 
-<div class="alert alert-info" role="alert">
-    BEM-VINDO AO SISTEMA SMARTUSER! AQUI VOCÊ PODE GERENCIAR USUÁRIOS E OUTROS RECURSOS.
+<!-- HERO SECTION COM MENOS MARGEM SUPERIOR -->
+<div class="hero-section text-white text-center py-4 rounded shadow-sm">
+    <h1 class="fw-bold">Sistema de Gestão</h1>
+    <p class="lead">Gerencie seus produtos, vendas e relatórios de forma eficiente</p>
+    <a href="#" class="btn btn-light btn-lg shadow-sm rounded-pill">
+        <i class="bi bi-arrow-right-circle"></i> Saiba Mais
+    </a>
 </div>
 
-<p>
-    <a href="@Url.Action("Index", "Usuario")" class="btn btn-primary">Acessar Usuários</a>
-</p>
+<!-- SEÇÃO DE CARDS (Subindo e espaçando um pouco) -->
+<div class="row mt-3 gx-4">
+    <div class="col-md-4">
+        <div class="card custom-card h-100">
+            <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-box-seam display-4 text-primary glow-icon"></i>
+                <h5 class="card-title mt-3">Gestão de Produtos</h5>
+                <p class="card-text flex-grow-1">Gerencie seu estoque de forma eficiente.</p>
+                <a href='@Url.Action("ListaDeProdutos", "Produto")' class="btn btn-primary rounded-pill w-75 mx-auto">
+                    <i class="bi bi-box-arrow-in-right"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card custom-card h-100">
+            <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-cash-coin display-4 text-success glow-icon"></i>
+                <h5 class="card-title mt-3">Faturamento</h5>
+                <p class="card-text flex-grow-1">Controle suas vendas e invoices.</p>
+                <a href='@Url.Action("ListaDeFaturas", "Fatura")' class="btn btn-success rounded-pill w-75 mx-auto">
+                    <i class="bi bi-file-earmark-text"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card custom-card h-100">
+            <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-graph-up-arrow display-4 text-danger glow-icon"></i>
+                <h5 class="card-title mt-3">Relatórios</h5>
+                <p class="card-text flex-grow-1">Gere relatórios detalhados do seu negócio.</p>
+                <a href="#" class="btn btn-danger rounded-pill w-75 mx-auto">
+                    <i class="bi bi-bar-chart-line"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RODAPÉ ESTILIZADO (mais espaçado e reduzido) -->
+<footer class="custom-footer text-center py-2 mt-3 rounded">
+    <p class="mb-0 small py-1">© 2025 Smartuser. Todos os direitos reservados.</p>
+</footer>
