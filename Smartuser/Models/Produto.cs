@@ -27,11 +27,10 @@ namespace Smartuser.Models
         [Display(Name = "Última Atualização")]
         public DateTime? DataUltimaAtualizacao { get; set; }
 
-        // Propriedade sombra para chave estrangeira
-        public int GrupoID { get; set; }
+        // Corrigido: agora usa GrupoProdutoID
+        public int GrupoProdutoID { get; set; }
 
-        // O campo Grupo não está exposto diretamente, mas o relacionamento é mapeado
         [ValidateNever]
-        public Grupo Grupo { get; set; }
+        public GrupoProduto GrupoProduto { get; set; }
     }
 }

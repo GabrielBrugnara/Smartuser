@@ -9,11 +9,11 @@ namespace Smartuser.Models
 
         [Required]
         public int FaturaID { get; set; }
-        public Fatura Fatura { get; set; }  // Relacionamento com Fatura
+        public Fatura Fatura { get; set; }
 
         [Required]
         public int ProdutoID { get; set; }
-        public Produto Produto { get; set; }  // Relacionamento com Produto
+        public Produto Produto { get; set; }
 
         [Required]
         public int Quantidade { get; set; }

@@ -9,18 +9,18 @@ namespace Smartuser.Data
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Produto> Produtos { get; set; }
-        public DbSet<Grupo> Grupos { get; set; }
+        public DbSet<GrupoProduto> GrupoProdutos { get; set; } // Renomeado aqui
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fatura> Faturas { get; set; }
         public DbSet<FaturaProduto> FaturaProdutos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Relacionamento entre Produto e Grupo
+            // Relacionamento entre Produto e GrupoProduto
             modelBuilder.Entity<Produto>()
-                .HasOne(p => p.Grupo) // Relacionamento com o Grupo
-                .WithMany(g => g.Produto) // Um Grupo tem muitos Produtos
-                .HasForeignKey(p => p.GrupoID) // Usamos a chave estrangeira "GrupoID"
+                .HasOne(p => p.GrupoProduto) // Atualizado para GrupoProduto
+                .WithMany(gp => gp.Produtos) // Um GrupoProduto tem muitos Produtos
+                .HasForeignKey(p => p.GrupoProdutoID) // Usa GrupoProdutoID como FK
                 .OnDelete(DeleteBehavior.Cascade); // Exclusão em cascata
 
             // Relacionamento entre Fatura e Cliente

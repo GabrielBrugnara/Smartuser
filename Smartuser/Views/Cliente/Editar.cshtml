@@ -6,7 +6,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Editar" method="post" id="formEditar" class="w-50 text-start">
+<form asp-action="Editar" method="post" id="formEditarCliente" class="w-50 text-start">
     <input type="hidden" asp-for="ID" />
 
     <div class="mb-3">
@@ -36,38 +36,36 @@
     </div>
 
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarEdicao">
-            Salvar Alterações
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
+            <i class="bi bi-check-circle"></i> Salvar Alterações
         </button>
+        <a asp-action="ListaClientes" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Voltar para a lista
+        </a>
     </div>
-</form>
 
-<div class="mt-3 text-start">
-    <a asp-action="ListaClientes" class="btn btn-secondary">Voltar para a lista</a>
-</div>
-
-<div class="modal fade" id="modalConfirmarEdicao" tabindex="-1" aria-labelledby="modalConfirmarEdicaoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalConfirmarEdicaoLabel">Confirmar Edição</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                Tem certeza de que deseja salvar as alterações neste cliente?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="confirmarEdicao()">Salvar</button>
+    <!-- Modal de confirmação para salvar alterações -->
+    <div class="modal fade" id="modalConfirmarSalvar" tabindex="-1" aria-labelledby="modalConfirmarSalvarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarSalvarLabel">
+                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar Alterações
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja salvar as alterações feitas neste cliente?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Confirmar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-@section Scripts {
-    <script>
-        function confirmarEdicao() {
-            document.getElementById("formEditar").submit();
-        }
-    </script>
-}
+</form>

@@ -1,76 +1,144 @@
-﻿@model IEnumerable<Smartuser.Models.Fatura>
+﻿@model Smartuser.Models.Fatura
 
 @{
-    ViewData["Title"] = "Lista de Faturas";
+    ViewData["Title"] = "Editar Fatura";
+    var clientes = ViewBag.Clientes as List<Smartuser.Models.Cliente>;
+    var produtos = ViewBag.Produtos;
 }
 
-<h2>Lista de Faturas</h2>
+<h2>Editar Fatura</h2>
 
-<!-- Botão para criar uma nova fatura -->
-<div class="text-start mb-3">
-    <a href="@Url.Action("Criar", "Fatura")" class="btn btn-primary btn-sm">Criar Fatura</a>
+<div class="mb-3">
+    <a href="@Url.Action("ListaDeFaturas", "Fatura")" class="btn btn-secondary btn-sm me-2">
+        <i class="bi bi-arrow-left"></i> Voltar para a Lista
+    </a>
+    <button type="submit" form="formEditarFatura" class="btn btn-primary btn-sm">
+        <i class="bi bi-save"></i> Salvar Alterações
+    </button>
 </div>
 
-<!-- Tabela de Faturas -->
-<table class="table table-striped table-bordered table-hover minha-tabela">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Cliente</th>
-            <th>Data da Venda</th>
-            <th>Total</th>
-            <th>Data de Criação</th>
-            <th>Última Atualização</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var fatura in Model)
-        {
-            <tr>
-                <td>@fatura.ID</td>
-                <td>@(fatura.Cliente != null ? fatura.Cliente.Nome : "Sem Cliente")</td>
-                <td>@fatura.DataVenda.ToString("dd/MM/yyyy")</td>
-                <td>@fatura.TotalGeral.ToString("C")</td>
-                <td>@fatura.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@(fatura.DataUltimaAtualizacao.HasValue ? fatura.DataUltimaAtualizacao.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
-                <td>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="setFaturaIdEditar(@fatura.ID)">Editar</button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setFaturaIdDeletar(@fatura.ID)">Excluir</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<form asp-action="Editar" method="post" id="formEditarFatura">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ID" />
 
-<!-- Modal de exclusão -->
-<div class="modal fade" id="modalDeletar" tabindex="-1" aria-labelledby="modalDeletarLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDeletarLabel">Confirmar Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                Tem certeza de que deseja excluir esta fatura?
-            </div>
-            <div class="modal-footer">
-                <form id="formDeletar" method="post">
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                </form>
-            </div>
-        </div>
+    <!-- Cliente -->
+    <div class="mb-3">
+        <label class="form-label">Cliente</label>
+        <select name="clienteId" class="form-select" required>
+            <option value="">Selecione um cliente</option>
+            @foreach (var cliente in clientes)
+            {
+                var selected = cliente.ID == Model.ClienteID ? "selected=\"selected\"" : "";
+                @:<option value="@cliente.ID" @selected>@cliente.Nome @cliente.Sobrenome</option>
+            }
+        </select>
     </div>
-</div>
+
+    <!-- Data da Venda -->
+    <div class="mb-3">
+        <label class="form-label">Data da Venda</label>
+        <input type="date" name="DataVenda" class="form-control" value="@Model.DataVenda.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <!-- Produtos -->
+    <h4>Produtos da Fatura</h4>
+    <table class="table table-striped table-bordered table-hover minha-tabela">
+        <thead class="table-dark">
+            <tr>
+                <th>Produto</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="faturaProdutosBody">
+            @foreach (var item in Model.FaturaProdutos)
+            {
+                <tr>
+                    <td>
+                        <select name="produtoIds[]" class="form-select" onchange="atualizarPreco(this)" required>
+                            <option value="">Selecione um produto</option>
+                            @foreach (var produto in produtos)
+                            {
+                                var selected = produto.ID == item.ProdutoID ? "selected=\"selected\"" : "";
+                                @:<option value="@produto.ID" data-preco="@produto.Preco" @selected>@produto.Descricao</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" name="precos[]" class="form-control" value="@item.Preco.ToString("0.00")" readonly />
+                    </td>
+                    <td>
+                        <input type="number" name="quantidades[]" class="form-control" value="@item.Quantidade" min="1" onchange="atualizarTotal()" required />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removerProduto(this)">
+                            <i class="bi bi-trash"></i> Remover
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarProduto()">
+            <i class="bi bi-plus-circle"></i> Adicionar Produto
+        </button>
+    </div>
+
+    <!-- Total -->
+    <div class="mb-3">
+        <label class="form-label">Valor Total</label>
+        <input type="text" id="totalFatura" class="form-control w-50" value="@Model.TotalGeral.ToString("0.00")" readonly />
+    </div>
+</form>
 
 @section Scripts {
     <script>
-        function setFaturaIdDeletar(faturaId) {
-            document.getElementById("formDeletar").action = '/Fatura/Delete/' + faturaId;
+        function adicionarProduto() {
+            var produtos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Produtos));
+            var selectHtml = '<select name="produtoIds[]" class="form-select" onchange="atualizarPreco(this)" required>';
+            selectHtml += '<option value="">Selecione um produto</option>';
+            for (var i = 0; i < produtos.length; i++) {
+                selectHtml += '<option value="' + produtos[i].ID + '" data-preco="' + produtos[i].Preco + '">' + produtos[i].Descricao + '</option>';
+            }
+            selectHtml += '</select>';
+
+            var newRow = '<tr>' +
+                '<td>' + selectHtml + '</td>' +
+                '<td><input type="number" step="0.01" name="precos[]" class="form-control" value="0" readonly /></td>' +
+                '<td><input type="number" name="quantidades[]" class="form-control" value="1" min="1" onchange="atualizarTotal()" required /></td>' +
+                '<td><button type="button" class="btn btn-danger btn-sm" onclick="removerProduto(this)"><i class="bi bi-trash"></i> Remover</button></td>' +
+                '</tr>';
+
+            document.getElementById("faturaProdutosBody").insertAdjacentHTML('beforeend', newRow);
+            atualizarTotal();
         }
-        function setFaturaIdEditar(faturaId) {
-            window.location.href = '/Fatura/Editar/' + faturaId;
+
+        function atualizarPreco(selectElem) {
+            var preco = selectElem.options[selectElem.selectedIndex].getAttribute("data-preco") || 0;
+            var row = selectElem.closest("tr");
+            row.querySelector('input[name="precos[]"]').value = parseFloat(preco).toFixed(2);
+            atualizarTotal();
         }
+
+        function removerProduto(btn) {
+            btn.closest("tr").remove();
+            atualizarTotal();
+        }
+
+        function atualizarTotal() {
+            var total = 0;
+            var rows = document.querySelectorAll("#faturaProdutosBody tr");
+            rows.forEach(function (row) {
+                var preco = parseFloat(row.querySelector('input[name="precos[]"]').value) || 0;
+                var quantidade = parseFloat(row.querySelector('input[name="quantidades[]"]').value) || 0;
+                total += preco * quantidade;
+            });
+            document.getElementById("totalFatura").value = total.toFixed(2);
+        }
+
+        document.addEventListener("DOMContentLoaded", atualizarTotal);
     </script>
 }

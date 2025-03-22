@@ -16,14 +16,13 @@
     </button>
 </div>
 
-<!-- Formulário de criação da Fatura -->
 <form asp-action="Criar" method="post" id="formCriarFatura" class="w-100">
     @Html.AntiForgeryToken()
 
-    <!-- Seleção do Cliente -->
+    <!-- Cliente -->
     <div class="mb-3">
         <label class="form-label">Cliente</label>
-        <select name="clienteId" class="form-select" required>
+        <select name="ClienteID" class="form-select" required>
             <option value="">Selecione um cliente</option>
             @foreach (var cliente in ViewBag.Clientes as List<Smartuser.Models.Cliente>)
             {
@@ -32,13 +31,13 @@
         </select>
     </div>
 
-    <!-- Campo de Data da Venda -->
+    <!-- Data da Venda -->
     <div class="mb-3">
         <label class="form-label">Data da Venda</label>
         <input type="date" name="DataVenda" class="form-control" required />
     </div>
 
-    <!-- Tabela de Produtos da Fatura -->
+    <!-- Produtos -->
     <h4>Produtos da Fatura</h4>
     <table class="table table-striped table-bordered table-hover minha-tabela">
         <thead class="table-dark">
@@ -50,7 +49,7 @@
             </tr>
         </thead>
         <tbody id="faturaProdutosBody">
-            <!-- Linhas adicionadas dinamicamente -->
+            <!-- Linhas vão aqui -->
         </tbody>
     </table>
 
@@ -60,7 +59,7 @@
         </button>
     </div>
 
-    <!-- Campo para exibir o total dos produtos -->
+    <!-- Total -->
     <div class="mb-3">
         <label class="form-label">Valor Total</label>
         <input type="text" id="totalFatura" name="Total" class="form-control w-50" value="0" readonly />
@@ -71,7 +70,7 @@
     <script>
         function adicionarProduto() {
             var produtos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Produtos));
-            var selectHtml = '<select name="produtoIds" class="form-select" onchange="atualizarPreco(this)">';
+            var selectHtml = '<select name="produtoIds[]" class="form-select" onchange="atualizarPreco(this)" required>';
             selectHtml += '<option value="">Selecione um produto</option>';
             for (var i = 0; i < produtos.length; i++) {
                 selectHtml += '<option value="' + produtos[i].ID + '" data-preco="' + produtos[i].Preco + '">' + produtos[i].Descricao + '</option>';
@@ -80,33 +79,34 @@
 
             var newRow = '<tr>' +
                 '<td>' + selectHtml + '</td>' +
-                '<td><input type="number" step="0.01" name="precos" class="form-control" value="0" readonly /></td>' +
-                '<td><input type="number" name="quantidades" class="form-control" value="1" min="1" onchange="atualizarTotal()" required /></td>' +
+                '<td><input type="number" step="0.01" name="precos[]" class="form-control" value="0" readonly /></td>' +
+                '<td><input type="number" name="quantidades[]" class="form-control" value="1" min="1" onchange="atualizarTotal()" required /></td>' +
                 '<td><button type="button" class="btn btn-danger btn-sm" onclick="removerProduto(this)"><i class="bi bi-trash"></i> Remover</button></td>' +
                 '</tr>';
+
             document.getElementById("faturaProdutosBody").insertAdjacentHTML('beforeend', newRow);
             atualizarTotal();
         }
 
         function atualizarPreco(selectElem) {
-            var preco = selectElem.options[selectElem.selectedIndex].getAttribute("data-preco");
+            var preco = selectElem.options[selectElem.selectedIndex].getAttribute("data-preco") || 0;
             var row = selectElem.closest("tr");
-            row.querySelector('input[name="precos"]').value = parseFloat(preco).toFixed(2);
+            row.querySelector('input[name="precos[]"]').value = parseFloat(preco).toFixed(2);
             atualizarTotal();
         }
 
         function removerProduto(btn) {
             var row = btn.closest("tr");
-            row.parentNode.removeChild(row);
+            row.remove();
             atualizarTotal();
         }
 
         function atualizarTotal() {
             var total = 0;
             var rows = document.querySelectorAll("#faturaProdutosBody tr");
-            rows.forEach(function(row) {
-                var preco = parseFloat(row.querySelector('input[name="precos"]').value) || 0;
-                var quantidade = parseFloat(row.querySelector('input[name="quantidades"]').value) || 0;
+            rows.forEach(function (row) {
+                var preco = parseFloat(row.querySelector('input[name="precos[]"]').value) || 0;
+                var quantidade = parseFloat(row.querySelector('input[name="quantidades[]"]').value) || 0;
                 total += preco * quantidade;
             });
             document.getElementById("totalFatura").value = total.toFixed(2);

@@ -1,14 +1,13 @@
-﻿@model Smartuser.Models.Grupo
+﻿@model Smartuser.Models.GrupoProduto
 
 @{
-    ViewData["Title"] = "Criar Grupo";
+    ViewData["Title"] = "Criar Grupo de Produto";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <div asp-validation-summary="All" class="text-danger"></div>
 
-<!-- Formulário de criação, alinhado à esquerda (w-50 sem centralizar) -->
 <form asp-action="Criar" method="post" class="w-50 text-start">
     <div class="mb-3">
         <label asp-for="Nome" class="form-label"></label>

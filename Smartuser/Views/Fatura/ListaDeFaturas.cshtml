@@ -8,7 +8,9 @@
 
 <!-- Botão para criar uma nova fatura -->
 <div class="text-start mb-3">
-    <a href="@Url.Action("Criar", "Fatura")" class="btn btn-primary btn-sm">Criar Fatura</a>
+    <a href="@Url.Action("Criar", "Fatura")" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-circle"></i> Criar Fatura
+    </a>
 </div>
 
 <!-- Tabela de Faturas -->
@@ -35,8 +37,12 @@
                 <td>@fatura.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
                 <td>@(fatura.DataUltimaAtualizacao.HasValue ? fatura.DataUltimaAtualizacao.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
                 <td>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="setFaturaIdEditar(@fatura.ID)">Editar</button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setFaturaIdDeletar(@fatura.ID)">Excluir</button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="setFaturaIdEditar(@fatura.ID)">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setFaturaIdDeletar(@fatura.ID)">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
                 </td>
             </tr>
         }
@@ -48,7 +54,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalDeletarLabel">Confirmar Exclusão</h5>
+                <h5 class="modal-title" id="modalDeletarLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> Confirmar Exclusão
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
@@ -57,8 +65,12 @@
             <div class="modal-footer">
                 <form id="formDeletar" method="post">
                     <input type="hidden" id="faturaId" name="id" />
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
                 </form>
             </div>
         </div>

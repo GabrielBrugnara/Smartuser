@@ -6,7 +6,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Editar" method="post" id="formEditar" class="w-50">
+<form asp-action="Editar" method="post" class="w-50" id="formEditarProduto">
     <input type="hidden" asp-for="ID" />
 
     <div class="mb-3">
@@ -16,12 +16,14 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Grupo</label>
-        <select class="form-control" id="GrupoID" name="GrupoID" required>
+        <label for="GrupoProdutoID" class="form-label">Grupo</label>
+        <select class="form-control" id="GrupoProdutoID" name="GrupoProdutoID" required>
             <option value="">Selecione um Grupo</option>
             @foreach (var grupo in ViewBag.Grupos)
             {
-                <option value="@grupo.ID" selected="@(Model.Grupo != null && Model.Grupo.GrupoID == grupo.ID ? "selected" : null)">@grupo.Nome</option>
+                <option value="@grupo.ID" selected="@(grupo.ID == Model.GrupoProdutoID)">
+                    @grupo.Nome
+                </option>
             }
         </select>
     </div>
@@ -38,37 +40,37 @@
         <span asp-validation-for="Preco" class="text-danger"></span>
     </div>
 
-    <!-- Botão de Salvar com Confirmação -->
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarEdicao">
-            Salvar Alterações
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
+            <i class="bi bi-check-circle"></i> Salvar
         </button>
+        <a href='@Url.Action("ListaDeProdutos", "Produto")' class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </a>
     </div>
-</form>
 
-<!-- Modal de Confirmação -->
-<div class="modal fade" id="modalConfirmarEdicao" tabindex="-1" aria-labelledby="modalConfirmarEdicaoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalConfirmarEdicaoLabel">Confirmar Edição</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Tem certeza de que deseja salvar as alterações neste produto?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="confirmarEdicao()">Salvar</button>
+    <!-- Modal de confirmação para salvar alterações -->
+    <div class="modal fade" id="modalConfirmarSalvar" tabindex="-1" aria-labelledby="modalConfirmarSalvarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarSalvarLabel">
+                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar Alterações
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja salvar as alterações feitas neste produto?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Confirmar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-@section Scripts {
-    <script>
-        function confirmarEdicao() {
-            document.getElementById("formEditar").submit();
-        }
-    </script>
-}
+</form>

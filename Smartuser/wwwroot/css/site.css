@@ -18,7 +18,7 @@ body {
 .sidebar {
     width: 250px;
     height: 100vh;
-    background: linear-gradient(135deg, rgba(52, 58, 64, 0.85), rgba(0, 0, 0, 0.7));
+    background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     backdrop-filter: blur(15px) brightness(1.1);
     -webkit-backdrop-filter: blur(15px) brightness(1.1);
     color: white;
@@ -30,14 +30,14 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 15px;
-    border-right: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+    border-right: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 4px 0 10px rgba(0,0,0,0.3);
     overflow: hidden; /* REMOVENDO SCROLL */
 }
 
     /* LINKS DO MENU LATERAL */
     .sidebar a {
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(255,255,255,0.85);
         text-decoration: none;
         padding: 12px 20px;
         display: block;
@@ -50,9 +50,9 @@ body {
     }
 
         .sidebar a:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             transform: scale(1.05);
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 15px rgba(255,255,255,0.9);
         }
 
 /* CABEÇALHO FIXO COM EFEITO DE VIDRO */
@@ -62,7 +62,7 @@ body {
     left: 250px;
     width: calc(100% - 250px);
     height: 90px;
-    background: linear-gradient(135deg, rgba(52, 58, 64, 0.85), rgba(0, 0, 0, 0.7));
+    background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     backdrop-filter: blur(12px) brightness(1.1);
     -webkit-backdrop-filter: blur(12px) brightness(1.1);
     color: white;
@@ -70,9 +70,9 @@ body {
     align-items: center;
     justify-content: flex-start;
     padding: 0 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
     z-index: 999;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(255,255,255,0.1);
 }
 
 /* CONTEÚDO PRINCIPAL */
@@ -85,15 +85,15 @@ body {
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255,255,255,0.9);
     border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
     flex-grow: 1;
 }
 
 /* HERO SECTION */
 .hero-section {
-    background: linear-gradient(135deg, rgba(52, 58, 64, 0.85), rgba(0, 0, 0, 0.7));
+    background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 50px;
@@ -101,15 +101,15 @@ body {
     margin-right: auto;
     max-width: 90%;
     border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
 }
 
 /* ESTILIZANDO OS CARDS COM TAMANHO FIXO E ALINHAMENTO CORRIGIDO */
 .custom-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255,255,255,0.9);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.2s ease-in-out;
     height: 220px;
     display: flex;
@@ -118,7 +118,7 @@ body {
 
     .custom-card:hover {
         transform: scale(1.05);
-        box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3);
+        box-shadow: 0px 4px 15px rgba(255,255,255,0.3);
     }
 
     /* Ajuste para alinhar botões dos cards */
@@ -138,19 +138,108 @@ body {
 
 /* GLOW NOS ÍCONES */
 .glow-icon {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 15px rgba(255,255,255,0.6);
 }
+
+/* ESTILO PARA BOTÕES:
+   - Mantém as cores originais dos botões.
+   - Aplica um pseudo-elemento ::before para o efeito de glass (frosted glass).
+   - No hover, o conteúdo (texto e ícones) ganha um glow mais intenso.
+*/
+.btn {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    transition: 0.3s ease-in-out, text-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+    border: none;
+    border-radius: 8px;
+}
+
+    .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
+        mix-blend-mode: overlay;
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: -1;
+        filter: blur(4px);
+        border-radius: inherit;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+        .btn:hover span,
+        .btn:hover i,
+        .btn:hover .btn-text {
+            text-shadow: 0 0 40px rgba(255,255,255,1) !important;
+        }
 
 /* RODAPÉ FIXO REDUZIDO */
 .custom-footer {
-    background: linear-gradient(135deg, rgba(52, 58, 64, 0.85), rgba(0, 0, 0, 0.7));
+    background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     color: white;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.3);
+    border-top: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
     position: fixed;
     bottom: 0;
     width: calc(100% - 250px);
     left: 250px;
-    padding: 8px 0; /* reduzido */
-    font-size: 0.8rem; /* fonte reduzida */
+    padding: 8px 0;
+    font-size: 0.8rem;
 }
+
+/* ========== TABELAS ARREDONDADAS E CLEAN ========== */
+.minha-tabela {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    margin-top: 1rem !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px) brightness(1.1);
+}
+
+    .minha-tabela thead.table-dark {
+        background-color: #343a40 !important;
+        color: #fff !important;
+    }
+
+        .minha-tabela thead.table-dark > tr > th:first-child {
+            border-top-left-radius: 8px !important;
+        }
+
+        .minha-tabela thead.table-dark > tr > th:last-child {
+            border-top-right-radius: 8px !important;
+        }
+
+    .minha-tabela thead:not(.table-dark) {
+        background-color: #f0f0f0 !important;
+        color: #000 !important;
+    }
+
+    .minha-tabela th,
+    .minha-tabela td {
+        padding: 0.75rem 1rem !important;
+        border-bottom: 1px solid #ddd !important;
+        text-align: left !important;
+    }
+
+    .minha-tabela tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+
+        .minha-tabela tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 8px !important;
+        }
+
+        .minha-tabela tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 8px !important;
+        }

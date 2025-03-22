@@ -6,10 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 // CONFIGURAR A CONEXÃO COM O BANCO DE DADOS LOCAL (USANDO STRING DE CONEXÃO DO appsettings.json)
 builder.Services.AddDbContext<SmartuserContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.EnableRetryOnFailure()));  // LENDO A STRING DE CONEXÃO DO ARQUIVO
+        sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
-// ADICIONAR SERVIÇOS PARA CONTROLADORES E VIEWS
-builder.Services.AddControllersWithViews();
+// CONFIGURAR JSON PARA IGNORAR CICLOS
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 var app = builder.Build();
 
@@ -22,6 +27,6 @@ app.UseRouting();
 // CONFIGURAR A ROTA PADRÃO PARA O "Home" COMO CONTROLADOR PRINCIPAL
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");  // ALTERADO PARA USAR "Dashboard" POR PADRÃO
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

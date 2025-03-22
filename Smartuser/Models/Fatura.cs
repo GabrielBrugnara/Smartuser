@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Smartuser.Models
 {
@@ -8,27 +9,27 @@ namespace Smartuser.Models
     {
         public int ID { get; set; }
 
-        public Cliente Cliente { get; set; }  // Cliente vinculado à fatura
+        [Required(ErrorMessage = "O cliente é obrigatório.")]
+        public int ClienteID { get; set; }
+        [ForeignKey("ClienteID")]
+        [Display(Name = "Cliente")]
+        public Cliente? Cliente { get; set; } // <- opcional e sem [Required] PS:Isso resolveu minha vida haha//
 
         [Required]
         [Display(Name = "Data da Venda")]
         [DataType(DataType.Date)]
         public DateTime DataVenda { get; set; }
 
-        [Required]
         [Display(Name = "Total Geral da Fatura")]
-        public decimal TotalGeral { get; set; } // Altere para TotalGeral para refletir o nome correto da coluna no banco de dados
+        public decimal TotalGeral { get; set; }
 
-        [Required]
         [Display(Name = "Quantidade Total de Produtos")]
-        public int TotalProdutos { get; set; } // Soma das quantidades dos produtos na fatura
+        public int TotalProdutos { get; set; }
 
-        [Required]
         public DateTime DataCriacao { get; set; } = DateTime.Now;
 
         public DateTime? DataUltimaAtualizacao { get; set; }
 
-        // Itens da fatura
         public ICollection<FaturaProduto> FaturaProdutos { get; set; } = new List<FaturaProduto>();
     }
 }

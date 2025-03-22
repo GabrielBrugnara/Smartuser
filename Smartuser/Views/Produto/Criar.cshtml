@@ -16,9 +16,9 @@
     </div>
 
     <div class="mb-3">
-        <label for="GrupoID" class="form-label">Grupo</label>
+        <label for="GrupoProdutoID" class="form-label">Grupo</label>
         <div class="input-group">
-            <select class="form-control" id="GrupoID" name="GrupoID" required>
+            <select class="form-control" id="GrupoProdutoID" name="GrupoProdutoID" required>
                 <option value="">Selecione um Grupo</option>
                 @foreach (var grupo in ViewBag.Grupos)
                 {
@@ -48,3 +48,63 @@
         <a href='@Url.Action("ListaDeProdutos", "Produto")' class="btn btn-secondary">Voltar</a>
     </div>
 </form>
+
+<!-- Modal para criar grupo -->
+<div class="modal fade" id="CreateGrupoModal" tabindex="-1" aria-labelledby="CreateGrupoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateGrupoModalLabel">Criar Novo Grupo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formGrupoProduto">
+                    <div class="mb-3">
+                        <label for="nomeGrupo" class="form-label">Nome do Grupo</label>
+                        <input type="text" class="form-control" id="nomeGrupo" required />
+                    </div>
+                    <button type="submit" class="btn btn-success">Salvar Grupo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('formGrupoProduto').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeGrupo').value;
+
+            fetch('/GrupoProduto/CriarViaModal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome: nome })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const select = document.getElementById('GrupoProdutoID');
+                    const option = document.createElement('option');
+                    option.value = data.grupo.id;
+                    option.text = data.grupo.nome;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('CreateGrupoModal'));
+                    modal.hide();
+                    document.getElementById('nomeGrupo').value = '';
+                } else {
+                    alert('Erro ao salvar o grupo: ' + (data.message || 'Erro desconhecido.'));
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                alert('Erro inesperado ao salvar o grupo.');
+            });
+        });
+    </script>
+}
+

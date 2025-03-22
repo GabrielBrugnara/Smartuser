@@ -1,12 +1,12 @@
-﻿@model Smartuser.Models.Usuario
+﻿@model Smartuser.Models.GrupoProduto
 
 @{
-    ViewData["Title"] = "Editar Usuário";
+    ViewData["Title"] = "Editar Grupo de Produto";
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Editar" method="post" id="formEditarUsuario" class="w-50">
+<form asp-action="Editar" method="post" class="w-50 text-start" id="formEditarGrupoProduto">
     <input type="hidden" asp-for="ID" />
 
     <div class="mb-3">
@@ -16,23 +16,11 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Sobrenome" class="form-label"></label>
-        <input asp-for="Sobrenome" class="form-control" required />
-        <span asp-validation-for="Sobrenome" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" required />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
-            <i class="bi bi-check-circle"></i> Salvar Alterações
+            <i class="bi bi-check-circle"></i> Salvar
         </button>
-        <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary">
-            <i class="bi bi-arrow-left-circle"></i> Voltar para a lista
+        <a asp-action="ListaGrupos" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar
         </a>
     </div>
 
@@ -47,7 +35,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    Tem certeza de que deseja salvar as alterações feitas neste usuário?
+                    Tem certeza de que deseja salvar as alterações feitas neste grupo de produto?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

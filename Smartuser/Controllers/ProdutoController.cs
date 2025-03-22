@@ -21,7 +21,7 @@ namespace Smartuser.Controllers
         public async Task<IActionResult> ListaDeProdutos()
         {
             var produtos = await _context.Produtos
-                                         .Include(p => p.Grupo)
+                                         .Include(p => p.GrupoProduto)
                                          .ToListAsync();
             return View(produtos);
         }
@@ -29,7 +29,7 @@ namespace Smartuser.Controllers
         // GET: Produto/Criar
         public IActionResult Criar()
         {
-            ViewBag.Grupos = _context.Grupos.ToList();
+            ViewBag.Grupos = _context.GrupoProdutos.ToList();
             return View();
         }
 
@@ -38,26 +38,26 @@ namespace Smartuser.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Criar(Produto produto)
         {
-            ViewBag.Grupos = _context.Grupos.ToList();
+            ViewBag.Grupos = _context.GrupoProdutos.ToList();
 
             if (!ModelState.IsValid)
                 return View(produto);
 
-            var grupoIdStr = Request.Form["GrupoID"].ToString();
-            if (string.IsNullOrEmpty(grupoIdStr) || !int.TryParse(grupoIdStr, out int grupoID))
+            var grupoIdStr = Request.Form["GrupoProdutoID"].ToString();
+            if (string.IsNullOrEmpty(grupoIdStr) || !int.TryParse(grupoIdStr, out int grupoProdutoID))
             {
-                ModelState.AddModelError("GrupoID", "Selecione um grupo válido.");
+                ModelState.AddModelError("GrupoProdutoID", "Selecione um grupo válido.");
                 return View(produto);
             }
 
-            var grupo = await _context.Grupos.FindAsync(grupoID);
+            var grupo = await _context.GrupoProdutos.FindAsync(grupoProdutoID);
             if (grupo == null)
             {
-                ModelState.AddModelError("GrupoID", "Grupo não encontrado.");
+                ModelState.AddModelError("GrupoProdutoID", "Grupo não encontrado.");
                 return View(produto);
             }
 
-            produto.Grupo = grupo;
+            produto.GrupoProduto = grupo;
             produto.DataCriacao = DateTime.Now;
             _context.Produtos.Add(produto);
 
@@ -81,12 +81,12 @@ namespace Smartuser.Controllers
                 return NotFound();
 
             var produto = await _context.Produtos
-                                        .Include(p => p.Grupo)
+                                        .Include(p => p.GrupoProduto)
                                         .FirstOrDefaultAsync(p => p.ID == id);
             if (produto == null)
                 return NotFound();
 
-            ViewBag.Grupos = _context.Grupos.ToList();
+            ViewBag.Grupos = _context.GrupoProdutos.ToList();
             return View(produto);
         }
 
@@ -108,18 +108,18 @@ namespace Smartuser.Controllers
 
                     produtoNoBanco.Descricao = produto.Descricao;
 
-                    var grupoIdStr = Request.Form["GrupoID"].ToString();
-                    if (!string.IsNullOrEmpty(grupoIdStr) && int.TryParse(grupoIdStr, out int grupoID))
+                    var grupoIdStr = Request.Form["GrupoProdutoID"].ToString();
+                    if (!string.IsNullOrEmpty(grupoIdStr) && int.TryParse(grupoIdStr, out int grupoProdutoID))
                     {
-                        var grupo = await _context.Grupos.FindAsync(grupoID);
+                        var grupo = await _context.GrupoProdutos.FindAsync(grupoProdutoID);
                         if (grupo != null)
                         {
-                            produtoNoBanco.Grupo = grupo;
+                            produtoNoBanco.GrupoProduto = grupo;
                         }
                         else
                         {
-                            ModelState.AddModelError("GrupoID", "Grupo não encontrado.");
-                            ViewBag.Grupos = _context.Grupos.ToList();
+                            ModelState.AddModelError("GrupoProdutoID", "Grupo não encontrado.");
+                            ViewBag.Grupos = _context.GrupoProdutos.ToList();
                             return View(produto);
                         }
                     }
@@ -139,7 +139,8 @@ namespace Smartuser.Controllers
                 }
                 return RedirectToAction(nameof(ListaDeProdutos));
             }
-            ViewBag.Grupos = _context.Grupos.ToList();
+
+            ViewBag.Grupos = _context.GrupoProdutos.ToList();
             return View(produto);
         }
 
@@ -150,7 +151,7 @@ namespace Smartuser.Controllers
                 return NotFound();
 
             var produto = await _context.Produtos
-                                        .Include(p => p.Grupo)
+                                        .Include(p => p.GrupoProduto)
                                         .FirstOrDefaultAsync(m => m.ID == id);
             if (produto == null)
                 return NotFound();
@@ -175,11 +176,11 @@ namespace Smartuser.Controllers
         // POST: Produto/CriarGrupo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CriarGrupo(Grupo grupo)
+        public async Task<IActionResult> CriarGrupo(GrupoProduto grupo)
         {
             if (ModelState.IsValid)
             {
-                _context.Grupos.Add(grupo);
+                _context.GrupoProdutos.Add(grupo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Criar));
             }

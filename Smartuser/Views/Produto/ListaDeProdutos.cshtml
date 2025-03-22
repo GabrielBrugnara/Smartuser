@@ -1,44 +1,46 @@
-﻿@model IEnumerable<Smartuser.Models.Cliente>
+﻿@model IEnumerable<Smartuser.Models.Produto>
 
 @{
-    ViewData["Title"] = "Lista de Clientes";
+    ViewData["Title"] = "Lista de Produtos";
 }
 
-<h2>Lista de Clientes</h2>
+<h2>Lista de Produtos</h2>
 
+<!-- BOTÃO CRIAR PRODUTO -->
 <div class="text-start mb-3">
-    <a href="@Url.Action("Criar", "Cliente")" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-circle"></i> Criar Cliente
+    <a href='@Url.Action("Criar", "Produto")' class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-circle"></i> Cadastrar Novo Produto
     </a>
 </div>
 
+<!-- Tabela de Produtos -->
 <table class="table table-striped table-bordered table-hover minha-tabela">
     <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Nome</th>
-            <th>Sobrenome</th>
-            <th>CPF/CNPJ</th>
-            <th>Email</th>
-            <th>Telefone</th>
+            <th>Descrição</th>
+            <th>Grupo</th>
+            <th>Quantidade em Estoque</th>
+            <th>Preço</th>
+            <th>Data de Criação</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var cliente in Model)
+        @foreach (var produto in Model)
         {
             <tr>
-                <td>@cliente.ID</td>
-                <td>@cliente.Nome</td>
-                <td>@cliente.Sobrenome</td>
-                <td>@cliente.CPFCNPJ</td>
-                <td>@cliente.Email</td>
-                <td>@cliente.Telefone</td>
+                <td>@produto.ID</td>
+                <td>@produto.Descricao</td>
+                <td>@produto.GrupoProduto?.Nome</td>
+                <td>@produto.QuantidadeEstoque</td>
+                <td>@produto.Preco.ToString("C")</td>
+                <td>@produto.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
                 <td>
-                    <a href="@Url.Action("Editar", "Cliente", new { id = cliente.ID })" class="btn btn-warning btn-sm">
+                    <a href="@Url.Action("Editar", "Produto", new { id = produto.ID })" class="btn btn-warning btn-sm">
                         <i class="bi bi-pencil-square"></i> Editar
                     </a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setClienteIdDeletar(@cliente.ID)">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setProdutoIdDeletar(@produto.ID)">
                         <i class="bi bi-trash"></i> Excluir
                     </button>
                 </td>
@@ -47,6 +49,7 @@
     </tbody>
 </table>
 
+<!-- Modal de confirmação de exclusão -->
 <div class="modal fade" id="modalDeletar" tabindex="-1" aria-labelledby="modalDeletarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -57,7 +60,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                Tem certeza de que deseja excluir este cliente?
+                Tem certeza de que deseja excluir este produto?
             </div>
             <div class="modal-footer">
                 <form id="formDeletar" method="post">
@@ -75,9 +78,9 @@
 
 @section Scripts {
     <script>
-        function setClienteIdDeletar(clienteId) {
+        function setProdutoIdDeletar(produtoId) {
             var formDeletar = document.getElementById("formDeletar");
-            formDeletar.action = '/Cliente/Delete/' + clienteId;
+            formDeletar.action = '/Produto/Delete/' + produtoId;
         }
     </script>
 }

@@ -7,63 +7,54 @@ using System.Threading.Tasks;
 
 namespace Smartuser.Controllers
 {
-    // Controller para gerenciar grupos
-    public class GrupoController : Controller
+    public class GrupoProdutoController : Controller
     {
         private readonly SmartuserContext _context;
 
-        public GrupoController(SmartuserContext context)
+        public GrupoProdutoController(SmartuserContext context)
         {
             _context = context;
         }
 
-        // Lista os grupos cadastrados
         public async Task<IActionResult> ListaGrupos()
         {
-            var grupos = await _context.Grupos.ToListAsync();
+            var grupos = await _context.GrupoProdutos.ToListAsync();
             return View(grupos);
         }
 
-        // Exibe o formulário para criar um novo grupo
         public IActionResult Criar()
         {
             return View();
         }
 
-        // Cria um novo grupo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Criar(Grupo grupo)
+        public async Task<IActionResult> Criar(GrupoProduto grupo)
         {
             if (ModelState.IsValid)
             {
-                _context.Grupos.Add(grupo);
+                _context.GrupoProdutos.Add(grupo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(ListaGrupos));
             }
             return View(grupo);
         }
 
-        // Exibe o formulário para editar um grupo existente
         public async Task<IActionResult> Editar(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
-            var grupo = await _context.Grupos.FindAsync(id);
-            if (grupo == null)
-                return NotFound();
+            var grupo = await _context.GrupoProdutos.FindAsync(id);
+            if (grupo == null) return NotFound();
 
             return View(grupo);
         }
 
-        // Processa a edição de um grupo
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, Grupo grupo)
+        public async Task<IActionResult> Editar(int id, GrupoProduto grupo)
         {
-            if (id != grupo.GrupoID)
-                return NotFound();
+            if (id != grupo.ID) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -74,7 +65,7 @@ namespace Smartuser.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Grupos.Any(e => e.GrupoID == grupo.GrupoID))
+                    if (!_context.GrupoProdutos.Any(e => e.ID == grupo.ID))
                         return NotFound();
                     else
                         throw;
@@ -84,39 +75,58 @@ namespace Smartuser.Controllers
             return View(grupo);
         }
 
-        // Exibe a tela de confirmação para exclusão de um grupo
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
-            var grupo = await _context.Grupos.FirstOrDefaultAsync(m => m.GrupoID == id);
-            if (grupo == null)
-                return NotFound();
+            var grupo = await _context.GrupoProdutos.FirstOrDefaultAsync(m => m.ID == id);
+            if (grupo == null) return NotFound();
 
             return View(grupo);
         }
 
-        // Exclui o grupo; se ocorrer erro (ex.: itens associados), redireciona com mensagem
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var grupo = await _context.Grupos.FindAsync(id);
+            var grupo = await _context.GrupoProdutos.FindAsync(id);
             if (grupo != null)
             {
-                _context.Grupos.Remove(grupo);
+                _context.GrupoProdutos.Remove(grupo);
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateException)
                 {
-                    TempData["Error"] = "Não foi possível excluir o grupo, pois existem itens associados.";
+                    TempData["Error"] = "Não foi possível excluir o grupo, pois existem produtos associados.";
                     return RedirectToAction(nameof(ListaGrupos));
                 }
             }
             return RedirectToAction(nameof(ListaGrupos));
+        }
+
+        // NOVO: Criar grupo via modal (AJAX)
+        [HttpPost]
+        public async Task<IActionResult> CriarViaModal([FromBody] GrupoProduto grupo)
+        {
+            if (string.IsNullOrWhiteSpace(grupo.Nome))
+            {
+                return BadRequest(new { success = false, message = "Nome do grupo é obrigatório." });
+            }
+
+            _context.GrupoProdutos.Add(grupo);
+            await _context.SaveChangesAsync();
+
+            return Json(new
+            {
+                success = true,
+                grupo = new
+                {
+                    grupo.ID,
+                    grupo.Nome
+                }
+            });
         }
     }
 }
