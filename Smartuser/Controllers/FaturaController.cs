@@ -34,7 +34,7 @@ namespace Smartuser.Controllers
                     p.ID,
                     p.Descricao,
                     p.Preco,
-                    p.QuantidadeEstoque,
+                    Estoque = p.QuantidadeEstoque,
                     GrupoNome = p.GrupoProduto.Nome
                 })
                 .ToList();
@@ -46,12 +46,6 @@ namespace Smartuser.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Criar(Fatura fatura, int clienteId, int[] produtoIds, int[] quantidades)
         {
-            Console.WriteLine("== RECEBIDO POST ==");
-            Console.WriteLine($"DataVenda: {fatura.DataVenda}");
-            Console.WriteLine($"ClienteId: {clienteId}");
-            Console.WriteLine($"ProdutoIds: {produtoIds?.Length}");
-            Console.WriteLine($"Quantidades: {quantidades?.Length}");
-
             if (Request.Form.TryGetValue("DataVenda", out var dataVendaString) &&
                 DateTime.TryParse(dataVendaString, out var dataVenda))
             {
@@ -73,24 +67,7 @@ namespace Smartuser.Controllers
                 fatura.ClienteID = clienteId;
             }
 
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Clientes = _context.Clientes.ToList();
-                ViewBag.Produtos = _context.Produtos
-                    .Select(p => new
-                    {
-                        p.ID,
-                        p.Descricao,
-                        p.Preco,
-                        p.QuantidadeEstoque,
-                        GrupoNome = p.GrupoProduto.Nome
-                    })
-                    .ToList();
-                return View(fatura);
-            }
-
             fatura.FaturaProdutos ??= new List<FaturaProduto>();
-
             decimal total = 0;
             int totalProdutos = 0;
             bool hasStockError = false;
@@ -125,7 +102,7 @@ namespace Smartuser.Controllers
                 }
             }
 
-            if (hasStockError)
+            if (!ModelState.IsValid || hasStockError)
             {
                 ViewBag.Clientes = _context.Clientes.ToList();
                 ViewBag.Produtos = _context.Produtos
@@ -134,7 +111,7 @@ namespace Smartuser.Controllers
                         p.ID,
                         p.Descricao,
                         p.Preco,
-                        p.QuantidadeEstoque,
+                        Estoque = p.QuantidadeEstoque,
                         GrupoNome = p.GrupoProduto.Nome
                     })
                     .ToList();
@@ -168,7 +145,7 @@ namespace Smartuser.Controllers
                     p.ID,
                     p.Descricao,
                     p.Preco,
-                    p.QuantidadeEstoque,
+                    Estoque = p.QuantidadeEstoque,
                     GrupoNome = p.GrupoProduto.Nome
                 })
                 .ToList();
@@ -193,28 +170,13 @@ namespace Smartuser.Controllers
                 fatura.ClienteID = clienteId;
             }
 
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Clientes = _context.Clientes.ToList();
-                ViewBag.Produtos = _context.Produtos
-                    .Select(p => new
-                    {
-                        p.ID,
-                        p.Descricao,
-                        p.Preco,
-                        p.QuantidadeEstoque,
-                        GrupoNome = p.GrupoProduto.Nome
-                    })
-                    .ToList();
-                return View(fatura);
-            }
-
             var faturaDb = await _context.Faturas
                 .Include(f => f.FaturaProdutos)
                 .FirstOrDefaultAsync(f => f.ID == id);
 
             if (faturaDb == null) return NotFound();
 
+            // Devolver estoque anterior
             foreach (var faturaProduto in faturaDb.FaturaProdutos)
             {
                 var produtoAntigo = await _context.Produtos.FindAsync(faturaProduto.ProdutoID);
@@ -261,7 +223,7 @@ namespace Smartuser.Controllers
                 }
             }
 
-            if (hasStockError)
+            if (!ModelState.IsValid || hasStockError)
             {
                 ViewBag.Clientes = _context.Clientes.ToList();
                 ViewBag.Produtos = _context.Produtos
@@ -270,7 +232,7 @@ namespace Smartuser.Controllers
                         p.ID,
                         p.Descricao,
                         p.Preco,
-                        p.QuantidadeEstoque,
+                        Estoque = p.QuantidadeEstoque,
                         GrupoNome = p.GrupoProduto.Nome
                     })
                     .ToList();
@@ -319,6 +281,16 @@ namespace Smartuser.Controllers
 
             if (fatura != null)
             {
+                // Retornar os produtos para o estoque
+                foreach (var faturaProduto in fatura.FaturaProdutos)
+                {
+                    var produto = await _context.Produtos.FindAsync(faturaProduto.ProdutoID);
+                    if (produto != null)
+                    {
+                        produto.QuantidadeEstoque += faturaProduto.Quantidade;
+                    }
+                }
+
                 _context.FaturaProdutos.RemoveRange(fatura.FaturaProdutos);
                 _context.Faturas.Remove(fatura);
                 await _context.SaveChangesAsync();
