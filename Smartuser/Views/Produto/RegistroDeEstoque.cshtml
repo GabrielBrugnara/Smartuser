@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Smartuser.Models.MovimentacaoEstoque>
+
+@{
+    ViewData["Title"] = "Registro de Movimentações de Estoque";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Tabela de Movimentações -->
+<table class="table table-striped table-bordered table-hover minha-tabela">
+    <thead class="table-dark">
+        <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Origem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var mov in Model)
+            {
+                var tipo = mov.Tipo?.ToLower();
+                string cor = "text-secondary";
+                string icone = "bi-info-circle";
+
+                if (tipo.Contains("entrada"))
+                {
+                    cor = "text-success";
+                    icone = "bi-arrow-down-circle-fill";
+                }
+                else if (tipo.Contains("saída") || tipo.Contains("saida"))
+                {
+                    cor = "text-danger";
+                    icone = "bi-arrow-up-circle-fill";
+                }
+
+                <tr>
+                    <td>@mov.Data.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td class="@cor">
+                        <i class="bi @icone"></i> @mov.Tipo
+                    </td>
+                    <td>@mov.Produto?.Descricao</td>
+                    <td>@mov.Quantidade</td>
+                    <td>@mov.Origem</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">Nenhuma movimentação registrada.</td>
+            </tr>
+        }
+    </tbody>
+</table>

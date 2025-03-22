@@ -68,7 +68,6 @@
             <i class="bi bi-house"></i> <span>Atalhos</span>
         </a>
 
-
         <!-- Botão Usuários -->
         <a href='@Url.Action("Index", "Usuario")'>
             <i class="bi bi-person"></i> <span>Usuários</span>
@@ -96,11 +95,16 @@
                     <i class="bi bi-chevron-down"></i>
                 </span>
             </a>
-            <!-- Submenu Estoque com caminho corrigido -->
+
+            <!-- Submenu Estoque com Grupos + Movimentações -->
             <div class="collapse" id="estoqueSubmenu">
                 <a href='@Url.Action("ListaGrupos", "GrupoProduto")'
                    style="display: block; padding: 10px 30px; font-size: 18px; color: white; text-decoration: none;">
                     <i class="bi bi-collection"></i> <span>Grupos</span>
+                </a>
+                <a href='@Url.Action("RegistroDeEstoque", "MovimentacaoEstoque")'
+                   style="display: block; padding: 10px 30px; font-size: 18px; color: white; text-decoration: none;">
+                    <i class="bi bi-arrow-left-right"></i> <span>Movimentações</span>
                 </a>
             </div>
         </div>

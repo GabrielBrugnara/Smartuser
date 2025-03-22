@@ -124,7 +124,26 @@ namespace Smartuser.Controllers
                         }
                     }
 
-                    produtoNoBanco.QuantidadeEstoque = produto.QuantidadeEstoque;
+                    int quantidadeAntes = produtoNoBanco.QuantidadeEstoque;
+                    int quantidadeDepois = produto.QuantidadeEstoque;
+
+                    if (quantidadeAntes != quantidadeDepois)
+                    {
+                        int diferenca = quantidadeDepois - quantidadeAntes;
+
+                        var tipo = diferenca > 0 ? "Entrada" : "Saída";
+
+                        _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque
+                        {
+                            Data = DateTime.Now,
+                            Tipo = "Ajuste Manual - " + tipo,
+                            ProdutoID = produtoNoBanco.ID,
+                            Quantidade = Math.Abs(diferenca),
+                            Origem = "Ajuste Manual"
+                        });
+
+                        produtoNoBanco.QuantidadeEstoque = quantidadeDepois;
+                    }
                     produtoNoBanco.Preco = produto.Preco;
                     produtoNoBanco.DataUltimaAtualizacao = DateTime.Now;
 

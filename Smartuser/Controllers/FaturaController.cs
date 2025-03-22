@@ -97,6 +97,15 @@ namespace Smartuser.Controllers
                             });
 
                             produto.QuantidadeEstoque -= quantidades[i];
+
+                            _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque
+                            {
+                                Data = DateTime.Now,
+                                Tipo = "Saída",
+                                ProdutoID = produto.ID,
+                                Quantidade = quantidades[i],
+                                Origem = "Fatura"
+                            });
                         }
                     }
                 }
@@ -176,12 +185,22 @@ namespace Smartuser.Controllers
 
             if (faturaDb == null) return NotFound();
 
-            // Devolver estoque anterior
             foreach (var faturaProduto in faturaDb.FaturaProdutos)
             {
                 var produtoAntigo = await _context.Produtos.FindAsync(faturaProduto.ProdutoID);
                 if (produtoAntigo != null)
+                {
                     produtoAntigo.QuantidadeEstoque += faturaProduto.Quantidade;
+
+                    _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque
+                    {
+                        Data = DateTime.Now,
+                        Tipo = "Entrada",
+                        ProdutoID = produtoAntigo.ID,
+                        Quantidade = faturaProduto.Quantidade,
+                        Origem = "Reversão de Fatura"
+                    });
+                }
             }
 
             _context.Entry(faturaDb).Property("ClienteID").CurrentValue = clienteId;
@@ -218,6 +237,15 @@ namespace Smartuser.Controllers
                             });
 
                             produto.QuantidadeEstoque -= quantidades[i];
+
+                            _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque
+                            {
+                                Data = DateTime.Now,
+                                Tipo = "Saída",
+                                ProdutoID = produto.ID,
+                                Quantidade = quantidades[i],
+                                Origem = "Fatura Editada"
+                            });
                         }
                     }
                 }
@@ -281,13 +309,21 @@ namespace Smartuser.Controllers
 
             if (fatura != null)
             {
-                // Retornar os produtos para o estoque
                 foreach (var faturaProduto in fatura.FaturaProdutos)
                 {
                     var produto = await _context.Produtos.FindAsync(faturaProduto.ProdutoID);
                     if (produto != null)
                     {
                         produto.QuantidadeEstoque += faturaProduto.Quantidade;
+
+                        _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque
+                        {
+                            Data = DateTime.Now,
+                            Tipo = "Entrada",
+                            ProdutoID = produto.ID,
+                            Quantidade = faturaProduto.Quantidade,
+                            Origem = "Fatura Deletada"
+                        });
                     }
                 }
 
