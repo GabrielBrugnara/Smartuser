@@ -16,7 +16,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 250px;
+            width: 220px;
             height: 100%;
             background-color: #343a40;
             padding-top: 20px;
@@ -39,20 +39,34 @@
 
             .sidebar img {
                 margin-bottom: 20px;
-                margin-left: 20px;
+                margin-left: 10px;
             }
 
         .content {
-            margin-left: 250px;
+            margin-left: 220px;
             padding: 20px;
+            width: calc(100% - 220px);
         }
 
         .header {
             background-color: #343a40;
             color: white;
-            padding: 15px;
-            text-align: center;
+            padding: 0 15px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            left: 220px;
+            width: calc(100% - 220px);
+            position: fixed;
+            top: 0;
+            z-index: 1030;
         }
+
+            .header h2 {
+                font-size: 20px;
+                margin: 0;
+            }
     </style>
 </head>
 <body>
@@ -63,27 +77,13 @@
         <img src='@Url.Content("~/images/logo.png")' alt="Logo ERP"
              style="width: 180px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;">
 
-        <!-- Botão Atalhos -->
-        <a href='@Url.Action("Index", "Home")'>
-            <i class="bi bi-house"></i> <span>Atalhos</span>
-        </a>
+        <!-- Botões -->
+        <a href='@Url.Action("Index", "Home")'><i class="bi bi-house"></i> <span>Atalhos</span></a>
+        <a href='@Url.Action("Index", "Usuario")'><i class="bi bi-person"></i> <span>Usuários</span></a>
+        <a href='@Url.Action("ListaClientes", "Cliente")'><i class="bi bi-person-lines-fill"></i> <span>Clientes</span></a>
+        <a href='@Url.Action("ListaDeFaturas", "Fatura")'><i class="bi bi-receipt"></i> <span>Faturamento</span></a>
 
-        <!-- Botão Usuários -->
-        <a href='@Url.Action("Index", "Usuario")'>
-            <i class="bi bi-person"></i> <span>Usuários</span>
-        </a>
-
-        <!-- Botão Clientes -->
-        <a href='@Url.Action("ListaClientes", "Cliente")'>
-            <i class="bi bi-person-lines-fill"></i> <span>Clientes</span>
-        </a>
-
-        <!-- Botão Faturamento -->
-        <a href='@Url.Action("ListaDeFaturas", "Fatura")'>
-            <i class="bi bi-receipt"></i> <span>Faturamento</span>
-        </a>
-
-        <!-- Botão Estoque com submenu -->
+        <!-- Submenu Estoque -->
         <div class="estoque-item" style="width: 100%;">
             <a href='@Url.Action("ListaDeProdutos", "Produto")'
                class="d-flex align-items-center justify-content-between estoque-link"
@@ -96,14 +96,11 @@
                 </span>
             </a>
 
-            <!-- Submenu Estoque com Grupos + Movimentações -->
             <div class="collapse" id="estoqueSubmenu">
-                <a href='@Url.Action("ListaGrupos", "GrupoProduto")'
-                   style="display: block; padding: 10px 30px; font-size: 18px; color: white; text-decoration: none;">
+                <a href='@Url.Action("ListaGrupos", "GrupoProduto")' style="padding: 10px 30px;">
                     <i class="bi bi-collection"></i> <span>Grupos</span>
                 </a>
-                <a href='@Url.Action("RegistroDeEstoque", "MovimentacaoEstoque")'
-                   style="display: block; padding: 10px 30px; font-size: 18px; color: white; text-decoration: none;">
+                <a href='@Url.Action("RegistroDeEstoque", "MovimentacaoEstoque")' style="padding: 10px 30px;">
                     <i class="bi bi-arrow-left-right"></i> <span>Movimentações</span>
                 </a>
             </div>
@@ -112,9 +109,7 @@
 
     <!-- CABEÇALHO FIXO -->
     <div class="header">
-        <h2 id="page-title">
-            <i class="bi bi-pc-display"></i> Erp Inteligente Para Seu Negocio!
-        </h2>
+        <h2 id="page-title"><i class="bi bi-pc-display"></i> Erp Inteligente Para Seu Negocio!</h2>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->

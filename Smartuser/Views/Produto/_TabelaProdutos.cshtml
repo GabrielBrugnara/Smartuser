@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Smartuser.Models.Produto>
+
+<table class="table table-striped table-bordered table-hover minha-tabela">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Grupo</th>
+            <th>Qtd Atual</th>
+            <th>Preço Unitario</th>
+            <th>Valor Total</th>
+            <th>Data Criação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var produto in Model)
+        {
+            <tr>
+                <td>@produto.ID</td>
+                <td>@produto.Descricao</td>
+                <td>@produto.GrupoProduto?.Nome</td>
+                <td>@produto.QuantidadeEstoque</td>
+                <td>@produto.Preco.ToString("C")</td>
+                <td>@((produto.Preco * produto.QuantidadeEstoque).ToString("C"))</td>
+                <td>@produto.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a href="@Url.Action("Editar", "Produto", new { id = produto.ID })" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setProdutoIdDeletar(@produto.ID)">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

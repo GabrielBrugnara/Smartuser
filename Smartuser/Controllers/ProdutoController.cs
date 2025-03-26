@@ -23,7 +23,40 @@ namespace Smartuser.Controllers
             var produtos = await _context.Produtos
                                          .Include(p => p.GrupoProduto)
                                          .ToListAsync();
+
+            ViewBag.Grupos = await _context.GrupoProdutos.ToListAsync();
             return View(produtos);
+        }
+
+        // GET: Produto/FiltrarTabela (AJAX)
+        public async Task<IActionResult> FiltrarTabela(string busca, string descricao, int? grupoProdutoId, decimal? precoMin, decimal? precoMax)
+        {
+            var query = _context.Produtos
+                                .Include(p => p.GrupoProduto)
+                                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(busca))
+            {
+                query = query.Where(p =>
+                    p.Descricao.Contains(busca) ||
+                    p.GrupoProduto.Nome.Contains(busca) ||
+                    p.Preco.ToString().Contains(busca));
+            }
+
+            if (!string.IsNullOrEmpty(descricao))
+                query = query.Where(p => p.Descricao.Contains(descricao));
+
+            if (grupoProdutoId.HasValue)
+                query = query.Where(p => p.GrupoProdutoID == grupoProdutoId);
+
+            if (precoMin.HasValue)
+                query = query.Where(p => p.Preco >= precoMin.Value);
+
+            if (precoMax.HasValue)
+                query = query.Where(p => p.Preco <= precoMax.Value);
+
+            var produtosFiltrados = await query.ToListAsync();
+            return PartialView("_TabelaProdutos", produtosFiltrados);
         }
 
         // GET: Produto/Criar
@@ -144,6 +177,7 @@ namespace Smartuser.Controllers
 
                         produtoNoBanco.QuantidadeEstoque = quantidadeDepois;
                     }
+
                     produtoNoBanco.Preco = produto.Preco;
                     produtoNoBanco.DataUltimaAtualizacao = DateTime.Now;
 

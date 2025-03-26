@@ -6,50 +6,42 @@
 
 <h2>Lista de Produtos</h2>
 
-<!-- BOTÃO CRIAR PRODUTO -->
-<div class="text-start mb-3">
+<!-- BOTÃO + FILTROS -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <a href='@Url.Action("Criar", "Produto")' class="btn btn-primary btn-sm">
         <i class="bi bi-plus-circle"></i> Cadastrar Novo Produto
     </a>
+
+    <form id="formFiltro" class="d-flex flex-wrap align-items-center gap-2">
+
+        <input type="text" name="busca" class="form-control form-control-sm" placeholder="Buscar..." style="width: 130px;" />
+
+        <input type="text" name="descricao" class="form-control form-control-sm" placeholder="Descrição" style="width: 130px;" />
+
+        <select name="grupoProdutoId" class="form-select form-select-sm" style="width: 130px;">
+            <option value="">Grupo</option>
+            @foreach (var grupo in ViewBag.Grupos)
+            {
+                <option value="@grupo.ID">@grupo.Nome</option>
+            }
+        </select>
+
+        <input type="number" step="0.01" name="precoMin" class="form-control form-control-sm" placeholder="Preço mín." style="width: 110px;" />
+        <input type="number" step="0.01" name="precoMax" class="form-control form-control-sm" placeholder="Preço máx." style="width: 110px;" />
+
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLimpar">
+            <i class="bi bi-x-circle"></i> Limpar Filtros
+        </button>
+
+    </form>
 </div>
 
-<!-- Tabela de Produtos -->
-<table class="table table-striped table-bordered table-hover minha-tabela">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Descrição</th>
-            <th>Grupo</th>
-            <th>Quantidade em Estoque</th>
-            <th>Preço</th>
-            <th>Data de Criação</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var produto in Model)
-        {
-            <tr>
-                <td>@produto.ID</td>
-                <td>@produto.Descricao</td>
-                <td>@produto.GrupoProduto?.Nome</td>
-                <td>@produto.QuantidadeEstoque</td>
-                <td>@produto.Preco.ToString("C")</td>
-                <td>@produto.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>
-                    <a href="@Url.Action("Editar", "Produto", new { id = produto.ID })" class="btn btn-warning btn-sm">
-                        <i class="bi bi-pencil-square"></i> Editar
-                    </a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setProdutoIdDeletar(@produto.ID)">
-                        <i class="bi bi-trash"></i> Excluir
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- TABELA DE PRODUTOS (via partial) -->
+<div id="tabelaProdutos">
+    @await Html.PartialAsync("_TabelaProdutos", Model)
+</div>
 
-<!-- Modal de confirmação de exclusão -->
+<!-- MODAL DE EXCLUSÃO (mantido igual) -->
 <div class="modal fade" id="modalDeletar" tabindex="-1" aria-labelledby="modalDeletarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -82,5 +74,35 @@
             var formDeletar = document.getElementById("formDeletar");
             formDeletar.action = '/Produto/Delete/' + produtoId;
         }
+
+        const form = document.getElementById("formFiltro");
+        const inputs = form.querySelectorAll("input, select");
+        const tabelaContainer = document.getElementById("tabelaProdutos");
+
+        function filtrarProdutos() {
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+
+            fetch(`/Produto/FiltrarTabela?${params}`, {
+                method: "GET"
+            })
+            .then(res => res.text())
+            .then(html => {
+                tabelaContainer.innerHTML = html;
+            });
+        }
+
+        inputs.forEach(el => {
+            el.addEventListener("input", () => {
+                clearTimeout(el._delay);
+                el._delay = setTimeout(filtrarProdutos, 400);
+            });
+            el.addEventListener("change", filtrarProdutos);
+        });
+
+        document.getElementById("btnLimpar").addEventListener("click", () => {
+            form.reset();
+            filtrarProdutos();
+        });
     </script>
 }

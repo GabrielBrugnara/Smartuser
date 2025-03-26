@@ -16,7 +16,7 @@ body {
 
 /* SIDEBAR FIXA COM DEGRADÊ + VIDRO */
 .sidebar {
-    width: 250px;
+    width: 220px; /* Reduzida de 250px para 220px */
     height: 100vh;
     background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     backdrop-filter: blur(15px) brightness(1.1);
@@ -59,8 +59,8 @@ body {
 .header {
     position: fixed;
     top: 0;
-    left: 250px;
-    width: calc(100% - 250px);
+    left: 220px; /* Ajustado */
+    width: calc(100% - 220px); /* Ajustado */
     height: 90px;
     background: linear-gradient(135deg, rgba(52,58,64,0.85), rgba(0,0,0,0.7));
     backdrop-filter: blur(12px) brightness(1.1);
@@ -77,10 +77,10 @@ body {
 
 /* CONTEÚDO PRINCIPAL */
 .content {
-    margin-left: 250px;
-    margin-top: 90px;
+    margin-left: 220px; /* Ajustado */
+    margin-top: 60px;
     padding: 20px;
-    width: calc(100% - 250px);
+    width: calc(100% - 220px); /* Ajustado */
     position: relative;
     overflow-x: hidden;
     display: flex;
@@ -141,11 +141,7 @@ body {
     text-shadow: 0 0 15px rgba(255,255,255,0.6);
 }
 
-/* ESTILO PARA BOTÕES:
-   - Mantém as cores originais dos botões.
-   - Aplica um pseudo-elemento ::before para o efeito de glass (frosted glass).
-   - No hover, o conteúdo (texto e ícones) ganha um glow mais intenso.
-*/
+/* ESTILO PARA BOTÕES (Efeito Glass) */
 .btn {
     position: relative;
     z-index: 1;
@@ -189,10 +185,11 @@ body {
     box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
     position: fixed;
     bottom: 0;
-    width: calc(100% - 250px);
-    left: 250px;
+    width: calc(100% - 220px); /* Ajustado */
+    left: 220px; /* Ajustado */
     padding: 8px 0;
     font-size: 0.8rem;
+    text-align: center; /* ? CENTRALIZA O TEXTO NO RODAPÉ */
 }
 
 /* ========== TABELAS ARREDONDADAS E CLEAN ========== */
