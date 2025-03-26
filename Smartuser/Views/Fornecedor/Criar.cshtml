@@ -1,0 +1,115 @@
+﻿@model Smartuser.Models.Fornecedor
+
+@{
+    ViewData["Title"] = "Cadastrar Novo Fornecedor";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Criar" method="post" class="w-50">
+    <div class="mb-3">
+        <label asp-for="Empresa" class="form-label">Empresa</label>
+        <input asp-for="Empresa" class="form-control" required />
+        <span asp-validation-for="Empresa" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="GrupoFornecedorID" class="form-label">Grupo</label>
+        <div class="input-group">
+            <select class="form-control" id="GrupoFornecedorID" name="GrupoFornecedorID" required>
+                <option value="">Selecione um Grupo</option>
+                @foreach (var grupo in ViewBag.Grupos)
+                {
+                    <option value="@grupo.ID">@grupo.Nome</option>
+                }
+            </select>
+            <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#CreateGrupoModal">
+                Criar Novo Grupo
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CNPJ" class="form-label">CNPJ</label>
+        <input asp-for="CNPJ" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Telefone" class="form-label">Telefone</label>
+        <input asp-for="Telefone" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Endereco" class="form-label">Endereço</label>
+        <input asp-for="Endereco" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <a href='@Url.Action("ListaDeFornecedores", "Fornecedor")' class="btn btn-secondary">Voltar</a>
+    </div>
+</form>
+
+<!-- Modal para criar grupo -->
+<div class="modal fade" id="CreateGrupoModal" tabindex="-1" aria-labelledby="CreateGrupoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateGrupoModalLabel">Criar Novo Grupo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formGrupoFornecedor">
+                    <div class="mb-3">
+                        <label for="nomeGrupo" class="form-label">Nome do Grupo</label>
+                        <input type="text" class="form-control" id="nomeGrupo" required />
+                    </div>
+                    <button type="submit" class="btn btn-success">Salvar Grupo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('formGrupoFornecedor').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeGrupo').value;
+
+            fetch('/Fornecedor/CriarViaModal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome: nome })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const select = document.getElementById('GrupoFornecedorID');
+                    const option = document.createElement('option');
+                    option.value = data.grupo.id;
+                    option.text = data.grupo.nome;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('CreateGrupoModal'));
+                    modal.hide();
+                    document.getElementById('nomeGrupo').value = '';
+                } else {
+                    alert('Erro: ' + (data.message || 'Erro desconhecido.'));
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro inesperado.');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,21 @@
+﻿@model Smartuser.Models.Fornecedor
+
+@{
+    ViewData["Title"] = "Excluir Fornecedor";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Tem certeza que deseja excluir este fornecedor?</h3>
+<div>
+    <h4>@Model.Empresa</h4>
+    <p>Grupo: @Model.GrupoFornecedor?.Nome</p>
+    <p>Telefone: @Model.Telefone</p>
+    <p>Email: @Model.Email</p>
+</div>
+
+<form asp-action="Deletar" method="post">
+    <input type="hidden" asp-for="ID" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a href='@Url.Action("ListaDeFornecedores", "Fornecedor")' class="btn btn-secondary">Cancelar</a>
+</form>

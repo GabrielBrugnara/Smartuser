@@ -1,0 +1,27 @@
+﻿@model Smartuser.Models.GrupoFornecedor
+
+@{
+    ViewData["Title"] = "Excluir Grupo";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h4>Tem certeza que deseja excluir este grupo?</h4>
+    <hr />
+    <dl class="row w-50 mx-auto">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ID)</dd>
+
+        <dt class="col-sm-3">Nome</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post" class="w-50 mx-auto">
+        <input type="hidden" asp-for="ID" />
+        <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-danger">Excluir</button>
+            <a asp-action="ListaGrupos" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

@@ -209,7 +209,7 @@ namespace Smartuser.Controllers
             if (produto == null)
                 return NotFound();
 
-            return View(produto);
+            return View("Deletar", produto); 
         }
 
         // POST: Produto/Delete/5

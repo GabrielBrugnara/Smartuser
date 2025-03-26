@@ -9,11 +9,13 @@ namespace Smartuser.Data
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Produto> Produtos { get; set; }
-        public DbSet<GrupoProduto> GrupoProdutos { get; set; } 
+        public DbSet<GrupoProduto> GrupoProdutos { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fatura> Faturas { get; set; }
         public DbSet<FaturaProduto> FaturaProdutos { get; set; }
         public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
+        public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<GrupoFornecedor> GrupoFornecedores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +56,13 @@ namespace Smartuser.Data
                 .WithMany()
                 .HasForeignKey(m => m.ProdutoID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // ✅ Relacionamento entre Fornecedor e GrupoFornecedor
+            modelBuilder.Entity<Fornecedor>()
+                .HasOne(f => f.GrupoFornecedor)
+                .WithMany(g => g.Fornecedores)
+                .HasForeignKey(f => f.GrupoFornecedorID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,0 +1,51 @@
+﻿@model Smartuser.Models.GrupoFornecedor
+
+@{
+    ViewData["Title"] = "Editar Grupo de Fornecedor";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Editar" method="post" class="w-50 text-start" id="formEditarGrupoFornecedor">
+    <input type="hidden" asp-for="ID" />
+
+    <div class="mb-3">
+        <label asp-for="Nome" class="form-label"></label>
+        <input asp-for="Nome" class="form-control" required />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
+            <i class="bi bi-check-circle"></i> Salvar
+        </button>
+        <a asp-action="ListaGrupos" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div class="modal fade" id="modalConfirmarSalvar" tabindex="-1" aria-labelledby="modalConfirmarSalvarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarSalvarLabel">
+                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar Alterações
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja salvar as alterações feitas neste grupo de fornecedor?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
