@@ -1,14 +1,14 @@
-﻿using System;
-
-namespace Smartuser.Models
+﻿namespace Smartuser.Models
 {
     public class Usuario
     {
-        public int ID { get; set; }  // ID GERADO AUTOMATICAMENTE
-        public string Nome { get; set; }  // NOME DO USUÁRIO
-        public string Sobrenome { get; set; }  // SOBRENOME DO USUÁRIO
-        public string Email { get; set; }  // EMAIL DO USUÁRIO
-        public DateTime DataCriacao { get; set; }  // DATA DE CRIAÇÃO (REGISTRO DO USUÁRIO)
-        public DateTime? UltimaAlteracao { get; set; }  // DATA DA ÚLTIMA ATUALIZAÇÃO, CASO HAJA
+        public int Id { get; set; }
+        public string Nome { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string SenhaHash { get; set; }
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
+        public DateTime? DataUltimaAtualizacao { get; set; }
+        public ICollection<UsuarioPermissao> Permissoes { get; set; }
     }
 }

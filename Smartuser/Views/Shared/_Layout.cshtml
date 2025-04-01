@@ -7,8 +7,8 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
     <link rel="stylesheet" href="~/css/site.css" />
+
     <style>
         .sidebar {
             position: fixed;
@@ -41,11 +41,11 @@
         .rotate-icon {
             display: inline-block;
             transition: transform 0.3s ease;
-            transform: rotate(-90deg); /* seta apontando pra esquerda (fechado) */
+            transform: rotate(-90deg);
         }
 
             .rotate-icon.open {
-                transform: rotate(0deg); /* seta normal (pra baixo) */
+                transform: rotate(0deg);
             }
 
         .content {
@@ -61,7 +61,7 @@
             height: 70px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             left: 220px;
             width: calc(100% - 220px);
             position: fixed;
@@ -76,62 +76,102 @@
     </style>
 </head>
 <body>
+    @{
+        bool podeGerenciarUsuarios = User.Identity.IsAuthenticated && User.HasClaim("Permission", "GerenciarUsuarios");
+        bool podeVisualizarClientes = User.Identity.IsAuthenticated && User.HasClaim("Permission", "VisualizarClientes");
+        bool podeVisualizarFornecedores = User.Identity.IsAuthenticated && User.HasClaim("Permission", "VisualizarFornecedores");
+        bool podeFaturamento = User.Identity.IsAuthenticated && (User.HasClaim("Permission", "VisualizarFaturas") || User.HasClaim("Permission", "EditarFaturas"));
+        bool podeAcessarEstoque = User.Identity.IsAuthenticated && User.HasClaim("Permission", "AcessarEstoque");
+        bool podeVisualizarProdutos = User.Identity.IsAuthenticated && User.HasClaim("Permission", "VisualizarProdutos");
+    }
+
 
     <!-- MENU LATERAL -->
     <div class="sidebar" id="sidebar">
         <img src='@Url.Content("~/images/logo.png")' alt="Logo ERP"
              style="width: 180px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;">
 
-        <!-- Botões -->
         <a href='@Url.Action("Index", "Home")'><i class="bi bi-house"></i> <span>Atalhos</span></a>
-        <a href='@Url.Action("Index", "Usuario")'><i class="bi bi-person"></i> <span>Usuários</span></a>
-        <a href='@Url.Action("ListaClientes", "Cliente")'><i class="bi bi-person-lines-fill"></i> <span>Clientes</span></a>
 
-        <!-- Submenu Fornecedores -->
-        <div class="w-100">
-            <a href="#" class="d-flex align-items-center justify-content-between text-white"
-               style="padding: 10px 15px; font-size: 18px;"
-               data-bs-toggle="collapse" data-bs-target="#fornecedorSubmenu" aria-expanded="false">
-                <span><i class="bi bi-truck"></i> Fornecedores</span>
-                <i class="bi bi-chevron-down rotate-icon" id="seta-fornecedor"></i>
-            </a>
-            <div class="collapse" id="fornecedorSubmenu">
-                <a href='@Url.Action("ListaDeFornecedores", "Fornecedor")' style="padding: 10px 30px;">
-                    <i class="bi bi-person-gear"></i> Lista
+        @if (podeGerenciarUsuarios)
+        {
+            <a href='@Url.Action("Index", "Usuario")'><i class="bi bi-person"></i> <span>Usuários</span></a>
+        }
+
+        @if (podeVisualizarClientes)
+        {
+            <a href='@Url.Action("ListaClientes", "Cliente")'><i class="bi bi-person-lines-fill"></i> <span>Clientes</span></a>
+        }
+
+        @if (podeVisualizarFornecedores)
+        {
+            <!-- Submenu Fornecedores -->
+            <div class="w-100">
+                <a href="#" class="d-flex align-items-center justify-content-between text-white"
+                   style="padding: 10px 15px; font-size: 18px;"
+                   data-bs-toggle="collapse" data-bs-target="#fornecedorSubmenu" aria-expanded="false">
+                    <span><i class="bi bi-truck"></i> Fornecedores</span>
+                    <i class="bi bi-chevron-down rotate-icon" id="seta-fornecedor"></i>
                 </a>
-                <a href='@Url.Action("ListaGrupos", "GrupoFornecedor")' style="padding: 10px 30px;">
-                    <i class="bi bi-collection"></i> Grupos
-                </a>
+                <div class="collapse" id="fornecedorSubmenu">
+                    <a href='@Url.Action("ListaDeFornecedores", "Fornecedor")' style="padding: 10px 30px;">
+                        <i class="bi bi-person-gear"></i> Lista
+                    </a>
+                    <a href='@Url.Action("ListaGrupos", "GrupoFornecedor")' style="padding: 10px 30px;">
+                        <i class="bi bi-collection"></i> Grupos
+                    </a>
+                </div>
             </div>
-        </div>
+        }
 
-        <a href='@Url.Action("ListaDeFaturas", "Fatura")'><i class="bi bi-receipt"></i> <span>Faturamento</span></a>
+        @if (podeFaturamento)
+        {
+            <a href='@Url.Action("ListaDeFaturas", "Fatura")'><i class="bi bi-receipt"></i> <span>Faturamento</span></a>
+        }
 
-        <!-- Submenu Estoque -->
-        <div class="w-100">
-            <a href="#" class="d-flex align-items-center justify-content-between text-white"
-               style="padding: 10px 15px; font-size: 18px;"
-               data-bs-toggle="collapse" data-bs-target="#estoqueSubmenu" aria-expanded="false">
-                <span><i class="bi bi-boxes"></i> Estoque</span>
-                <i class="bi bi-chevron-down rotate-icon" id="seta-estoque"></i>
-            </a>
-            <div class="collapse" id="estoqueSubmenu">
-                <a href='@Url.Action("ListaDeProdutos", "Produto")' style="padding: 10px 30px;">
-                    <i class="bi bi-list"></i> Produtos
+        @if (podeAcessarEstoque)
+        {
+            <!-- Submenu Estoque -->
+            <div class="w-100">
+                <a href="#" class="d-flex align-items-center justify-content-between text-white"
+                   style="padding: 10px 15px; font-size: 18px;"
+                   data-bs-toggle="collapse" data-bs-target="#estoqueSubmenu" aria-expanded="false">
+                    <span><i class="bi bi-boxes"></i> Estoque</span>
+                    <i class="bi bi-chevron-down rotate-icon" id="seta-estoque"></i>
                 </a>
-                <a href='@Url.Action("ListaGrupos", "GrupoProduto")' style="padding: 10px 30px;">
-                    <i class="bi bi-collection"></i> Grupos
-                </a>
-                <a href='@Url.Action("RegistroDeEstoque", "MovimentacaoEstoque")' style="padding: 10px 30px;">
-                    <i class="bi bi-arrow-left-right"></i> Movimentações
-                </a>
+                <div class="collapse" id="estoqueSubmenu">
+                    @if (podeVisualizarProdutos)
+                    {
+                        <a href='@Url.Action("ListaDeProdutos", "Produto")' style="padding: 10px 30px;">
+                            <i class="bi bi-list"></i> Produtos
+                        </a>
+                    }
+                    <a href='@Url.Action("ListaGrupos", "GrupoProduto")' style="padding: 10px 30px;">
+                        <i class="bi bi-collection"></i> Grupos
+                    </a>
+                    <a href='@Url.Action("RegistroDeEstoque", "MovimentacaoEstoque")' style="padding: 10px 30px;">
+                        <i class="bi bi-arrow-left-right"></i> Movimentações
+                    </a>
+                </div>
             </div>
-        </div>
+        }
     </div>
 
     <!-- CABEÇALHO -->
     <div class="header">
-        <h2 id="page-title"><i class="bi bi-pc-display"></i> Erp Inteligente Para Seu Negocio!</h2>
+        <h2 id="page-title"><i class="bi bi-pc-display"></i> Erp Inteligente Para Seu Negócio!</h2>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="d-flex align-items-center">
+                <span class="me-3"><i class="bi bi-person-circle"></i> @User.Identity.Name</span>
+                <form asp-controller="Login" asp-action="Sair" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </button>
+                </form>
+            </div>
+        }
     </div>
 
     <!-- CONTEÚDO -->
@@ -162,6 +202,5 @@
     </script>
 
     @RenderSection("Scripts", false)
-
 </body>
 </html>

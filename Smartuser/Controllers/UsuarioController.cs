@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Smartuser.Models;
+using Smartuser.Models.ViewModels;
 using Smartuser.Data;
 using System;
 using System.Linq;
@@ -23,78 +25,146 @@ namespace Smartuser.Controllers
             return View("ListaUsuarios", usuarios);
         }
 
-        // PÁGINA DE CRIAÇÃO
+        // GET: Criar
         public IActionResult Criar()
         {
-            return View();
+            var viewModel = new UsuarioViewModel
+            {
+                TodasAsPermissoes = _context.Permissoes.ToList()
+            };
+
+            return View(viewModel);
         }
 
-        // PROCESSA O CADASTRO DO USUÁRIO
+        // POST: Criar
         [HttpPost]
-        [ValidateAntiForgeryToken]  // Adicionando proteção contra ataques CSRF
-        public async Task<IActionResult> Criar(Usuario usuario)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Criar(UsuarioViewModel viewModel)
         {
+            ModelState.Remove("TodasAsPermissoes");
+
             if (ModelState.IsValid)
             {
-                usuario.DataCriacao = DateTime.Now;
-                _context.Usuarios.Add(usuario);
-                await _context.SaveChangesAsync();  // Usando SaveChangesAsync para operações assíncronas
-                return RedirectToAction("Index");
-            }
-            return View(usuario);
-        }
-
-        // PÁGINA DE EDIÇÃO
-        public async Task<IActionResult> Editar(int id)
-        {
-            var usuario = await _context.Usuarios.FindAsync(id);  // Usando FindAsync para operações assíncronas
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-            return View(usuario);
-        }
-
-        // PROCESSA A EDIÇÃO
-        [HttpPost]
-        [ValidateAntiForgeryToken]  // Adicionando proteção contra ataques CSRF
-        public async Task<IActionResult> Editar(Usuario usuario)
-        {
-            if (ModelState.IsValid)
-            {
-                var usuarioExistente = await _context.Usuarios.FindAsync(usuario.ID);  // Usando FindAsync para operações assíncronas
-
-                if (usuarioExistente == null)
+                var usuario = new Usuario
                 {
-                    return NotFound();
+                    Nome = viewModel.Nome,
+                    Username = viewModel.Username,
+                    Email = viewModel.Email,
+                    SenhaHash = BCrypt.Net.BCrypt.HashPassword(viewModel.Senha),
+                    DataCriacao = DateTime.Now
+                };
+
+                _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                foreach (var pId in viewModel.PermissoesSelecionadas)
+                {
+                    _context.UsuarioPermissoes.Add(new UsuarioPermissao
+                    {
+                        UsuarioId = usuario.Id,
+                        PermissaoId = pId
+                    });
                 }
 
-                usuarioExistente.Nome = usuario.Nome;
-                usuarioExistente.Sobrenome = usuario.Sobrenome;
-                usuarioExistente.Email = usuario.Email;
-                usuarioExistente.UltimaAlteracao = DateTime.Now;
-
-                await _context.SaveChangesAsync();  // Usando SaveChangesAsync para operações assíncronas
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(usuario);
+
+            viewModel.TodasAsPermissoes = _context.Permissoes.ToList();
+            return View(viewModel);
         }
 
-        // PROCESSA A EXCLUSÃO
-        [HttpPost]
-        [ValidateAntiForgeryToken]  // Adicionando proteção contra ataques CSRF
-        public async Task<IActionResult> Deletar(int id)
+        // GET: Editar
+        public async Task<IActionResult> Editar(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);  // Usando FindAsync para operações assíncronas
+            var usuario = await _context.Usuarios
+                .Include(u => u.Permissoes)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (usuario == null)
-            {
                 return NotFound();
+
+            var viewModel = new UsuarioViewModel
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Username = usuario.Username,
+                Email = usuario.Email,
+                PermissoesSelecionadas = usuario.Permissoes.Select(p => p.PermissaoId).ToList(),
+                TodasAsPermissoes = _context.Permissoes.ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Editar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(UsuarioViewModel viewModel, string novaSenha)
+        {
+            // Remover validações que não se aplicam na edição:
+            ModelState.Remove("TodasAsPermissoes");
+            // Remove todas as entradas relacionadas à "Senha" (garante remover "Senha" e variações)
+            foreach (var key in ModelState.Keys.Where(k => k.Contains("Senha")).ToList())
+            {
+                ModelState.Remove(key);
             }
 
+            var usuario = await _context.Usuarios
+                .Include(u => u.Permissoes)
+                .FirstOrDefaultAsync(u => u.Id == viewModel.Id);
+
+            if (usuario == null)
+                return NotFound();
+
+            // Atualiza os dados (exceto Senha, que só é atualizada se novaSenha for preenchida)
+            if (usuario.Id != 1)
+            {
+                usuario.Nome = viewModel.Nome;
+                usuario.Username = viewModel.Username;
+
+                usuario.Permissoes.Clear();
+                if (viewModel.PermissoesSelecionadas != null)
+                {
+                    foreach (var pId in viewModel.PermissoesSelecionadas)
+                    {
+                        usuario.Permissoes.Add(new UsuarioPermissao
+                        {
+                            PermissaoId = pId,
+                            UsuarioId = usuario.Id
+                        });
+                    }
+                }
+            }
+
+            usuario.Email = viewModel.Email;
+            usuario.DataUltimaAtualizacao = DateTime.Now;
+
+            // Se o campo de nova senha for preenchido, atualiza a senha; se não, mantém a senha atual.
+            if (!string.IsNullOrWhiteSpace(novaSenha))
+            {
+                usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        // POST: Deletar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deletar(int id)
+        {
+            if (id == 1)
+                return Forbid(); // 🔒 Protege admin padrão
+
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return NotFound();
+
             _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();  // Usando SaveChangesAsync para operações assíncronas
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }

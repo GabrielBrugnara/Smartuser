@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "_LayoutLogin";
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-glass p-4 text-center">
+
+    <!-- Logo centralizada -->
+    <img src="@Url.Content("~/images/logo.png")"
+         alt="Logo Smartuser"
+         class="mb-4 mx-auto d-block"
+         style="width: 180px; height: 60px; object-fit: cover; border-radius: 8px;" />
+
+    <h5 class="mb-4 text-light"><i class="bi bi-lock-fill me-1"></i> Acesso ao Sistema</h5>
+
+    <form method="post" id="form-login" class="text-start text-light">
+        <div class="mb-3">
+            <label for="username" class="form-label">Usuário</label>
+            <input type="text" name="username" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="senha" class="form-label">Senha</label>
+            <input type="password" name="senha" class="form-control" required />
+        </div>
+
+        @if (ViewBag.Erro != null)
+        {
+            <div class="alert alert-danger text-center">@ViewBag.Erro</div>
+        }
+
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary" id="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Entrar
+            </button>
+        </div>
+
+        <div class="text-center">
+            <a href="#" class="text-light"><i class="bi bi-question-circle"></i> Esqueci minha senha</a>
+        </div>
+    </form>
+</div>

@@ -1,63 +1,164 @@
-﻿@model Smartuser.Models.Usuario
+﻿@model Smartuser.Models.ViewModels.UsuarioViewModel
 
 @{
     ViewData["Title"] = "Editar Usuário";
+    int usuarioId = Model.Id;
+    var atributosInput = new Dictionary<string, object>();
+    if (usuarioId == 1)
+    {
+        atributosInput["readonly"] = "readonly";
+        atributosInput["onclick"] = "showAdminWarningModal()";
+    }
+    else
+    {
+        atributosInput["required"] = "required";
+    }
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 
-<form asp-action="Editar" method="post" id="formEditarUsuario" class="w-50">
-    <input type="hidden" asp-for="ID" />
+@if (usuarioId == 1)
+{
+    <div class="alert alert-info w-75 mt-2">
+        <i class="bi bi-shield-lock-fill"></i>
+        Este é o administrador padrão do sistema.
+        <strong>Apenas o e-mail e a senha</strong> podem ser modificados.
+    </div>
+}
 
-    <div class="mb-3">
-        <label asp-for="Nome" class="form-label"></label>
-        <input asp-for="Nome" class="form-control" required />
-        <span asp-validation-for="Nome" class="text-danger"></span>
+<form id="formEditarUsuario" asp-action="Editar" asp-route-id="@usuarioId" method="post" class="w-100 d-flex gap-4 align-items-start flex-wrap">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@usuarioId" />
+
+    <!-- Coluna esquerda -->
+    <div class="flex-grow-1" style="min-width: 300px;">
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control" asp-all-attributes="atributosInput" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Username" class="form-label"></label>
+            <input asp-for="Username" class="form-control" asp-all-attributes="atributosInput" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" type="email" class="form-control" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nova Senha (opcional)</label>
+            <input name="novaSenha" type="password" class="form-control" placeholder="Deixe em branco para manter a senha atual" />
+        </div>
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
+                <i class="bi bi-check-circle"></i> Salvar Alterações
+            </button>
+            <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary ms-2">
+                <i class="bi bi-arrow-left-circle"></i> Voltar para a lista
+            </a>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Sobrenome" class="form-label"></label>
-        <input asp-for="Sobrenome" class="form-control" required />
-        <span asp-validation-for="Sobrenome" class="text-danger"></span>
-    </div>
+    <!-- Coluna direita: Permissões -->
+    <div class="border rounded p-3 bg-light" style="min-width: 320px; max-height: 460px; overflow-y: auto;">
+        <label class="form-label d-block">Permissões</label>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" required />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+        @if (usuarioId != 1)
+        {
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="selecionarTodas" onchange="toggleTodasPermissoes(this)">
+                <label class="form-check-label fw-bold" for="selecionarTodas">
+                    Selecionar todas
+                </label>
+            </div>
+            <hr class="my-2" />
 
-    <div class="mb-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarSalvar">
-            <i class="bi bi-check-circle"></i> Salvar Alterações
-        </button>
-        <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary">
-            <i class="bi bi-arrow-left-circle"></i> Voltar para a lista
-        </a>
+            @foreach (var permissao in Model.TodasAsPermissoes)
+            {
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="PermissoesSelecionadas"
+                           value="@permissao.Id"
+                           id="perm_@permissao.Id"
+                    @(Model.PermissoesSelecionadas.Contains(permissao.Id) ? "checked" : "") />
+                    <label class="form-check-label" for="perm_@permissao.Id">
+                        @permissao.Nome
+                    </label>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="border rounded p-3 text-muted bg-light">
+                Permissões do administrador padrão não podem ser modificadas.
+            </div>
+        }
     </div>
+</form>
 
-    <!-- Modal de confirmação para salvar alterações -->
-    <div class="modal fade" id="modalConfirmarSalvar" tabindex="-1" aria-labelledby="modalConfirmarSalvarLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalConfirmarSalvarLabel">
-                        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar Alterações
+<!-- Modal fora do form, mas enviando ele -->
+<div class="modal fade" id="modalConfirmarSalvar" tabindex="-1" aria-labelledby="modalConfirmarSalvarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarSalvarLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar Alterações
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza de que deseja salvar as alterações feitas neste usuário?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="submit" form="formEditarUsuario" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleTodasPermissoes(masterCheckbox) {
+            document.querySelectorAll('input[name="PermissoesSelecionadas"]')
+                .forEach(p => p.checked = masterCheckbox.checked);
+        }
+
+        function showAdminWarningModal() {
+            const modal = new bootstrap.Modal(document.getElementById('adminWarningModal'));
+            modal.show();
+        }
+    </script>
+
+    <!-- Modal de aviso -->
+    <div class="modal fade" id="adminWarningModal" tabindex="-1" aria-labelledby="adminWarningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-warning">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="adminWarningModalLabel">
+                        <i class="bi bi-shield-lock-fill"></i> Aviso Importante
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    Tem certeza de que deseja salvar as alterações feitas neste usuário?
+                    O administrador padrão do sistema não pode ter o nome, username ou permissões alterados.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Confirmar
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Entendi</button>
                 </div>
             </div>
         </div>
     </div>
-</form>
+}

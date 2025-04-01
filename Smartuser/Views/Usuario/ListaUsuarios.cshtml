@@ -19,7 +19,7 @@
         <tr>
             <th>ID</th>
             <th>Nome</th>
-            <th>Sobrenome</th>
+            <th>Username</th>
             <th>Email</th>
             <th>Data de Criação</th>
             <th>Última Atualização</th>
@@ -30,20 +30,20 @@
         @foreach (var usuario in Model)
         {
             <tr>
-                <td>@usuario.ID</td>
+                <td>@usuario.Id</td>
                 <td>@usuario.Nome</td>
-                <td>@usuario.Sobrenome</td>
+                <td>@usuario.Username</td>
                 <td>@usuario.Email</td>
                 <td>@usuario.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@(usuario.UltimaAlteracao.HasValue ? usuario.UltimaAlteracao.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                <td>@(usuario.DataUltimaAtualizacao?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
                 <td>
                     <!-- Botão Editar -->
-                    <button type="button" class="btn btn-warning btn-sm" onclick="setUsuarioIdEditar(@usuario.ID)">
+                    <button type="button" class="btn btn-warning btn-sm" onclick="setUsuarioIdEditar(@usuario.Id)">
                         <i class="bi bi-pencil-square"></i> Editar
                     </button>
 
                     <!-- Botão Deletar -->
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setUsuarioIdDeletar(@usuario.ID)">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDeletar" onclick="setUsuarioIdDeletar(@usuario.Id)">
                         <i class="bi bi-trash"></i> Excluir
                     </button>
                 </td>
